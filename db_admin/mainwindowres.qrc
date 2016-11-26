@@ -9,5 +9,6 @@
         <file>MainWindowRes/delete_oper.png</file>
         <file>MainWindowRes/delete_order.png</file>
         <file>MainWindowRes/delete_staff.png</file>
+        <file>MainWindowRes/abacus.png</file>
     </qresource>
 </RCC>

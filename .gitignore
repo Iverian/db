@@ -30,3 +30,12 @@
 
 #qt files
 *.user
+*.autosave
+Makefile
+*.Debug
+*.Release
+ui_*.h
+ui_*.cpp
+moc_*.h
+moc_*.cpp
+

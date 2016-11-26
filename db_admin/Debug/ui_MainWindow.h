@@ -15,7 +15,6 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QListView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QTabWidget>
@@ -44,14 +43,14 @@ public:
     QTabWidget *tabWidget;
     QWidget *operations;
     QGridLayout *gridLayout_3;
-    QListView *operNames;
     QPlainTextEdit *operDesc;
+    QTableView *operNames;
     QWidget *orders;
     QGridLayout *gridLayout_4;
-    QListView *orderNames;
     QVBoxLayout *verticalLayout;
     QPlainTextEdit *orderDesc;
     QTreeView *orderAlgo;
+    QTableView *orderNames;
     QWidget *staff;
     QGridLayout *gridLayout_5;
     QTableView *staffView;
@@ -65,51 +64,54 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(800, 600);
+        QIcon icon;
+        icon.addFile(QStringLiteral(":/MainWindowRes/abacus.png"), QSize(), QIcon::Normal, QIcon::Off);
+        MainWindow->setWindowIcon(icon);
         actNewOperation = new QAction(MainWindow);
         actNewOperation->setObjectName(QStringLiteral("actNewOperation"));
-        QIcon icon;
-        icon.addFile(QStringLiteral(":/MainWindowRes/new_oper.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actNewOperation->setIcon(icon);
+        QIcon icon1;
+        icon1.addFile(QStringLiteral(":/MainWindowRes/new_oper.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actNewOperation->setIcon(icon1);
         actNewOrder = new QAction(MainWindow);
         actNewOrder->setObjectName(QStringLiteral("actNewOrder"));
-        QIcon icon1;
-        icon1.addFile(QStringLiteral(":/MainWindowRes/new_order.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actNewOrder->setIcon(icon1);
+        QIcon icon2;
+        icon2.addFile(QStringLiteral(":/MainWindowRes/new_order.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actNewOrder->setIcon(icon2);
         actNewStaffMember = new QAction(MainWindow);
         actNewStaffMember->setObjectName(QStringLiteral("actNewStaffMember"));
-        QIcon icon2;
-        icon2.addFile(QStringLiteral(":/MainWindowRes/new_staff.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actNewStaffMember->setIcon(icon2);
+        QIcon icon3;
+        icon3.addFile(QStringLiteral(":/MainWindowRes/new_staff.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actNewStaffMember->setIcon(icon3);
         actEditOperation = new QAction(MainWindow);
         actEditOperation->setObjectName(QStringLiteral("actEditOperation"));
-        QIcon icon3;
-        icon3.addFile(QStringLiteral(":/MainWindowRes/edit_oper.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actEditOperation->setIcon(icon3);
+        QIcon icon4;
+        icon4.addFile(QStringLiteral(":/MainWindowRes/edit_oper.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actEditOperation->setIcon(icon4);
         actEditOrder = new QAction(MainWindow);
         actEditOrder->setObjectName(QStringLiteral("actEditOrder"));
-        QIcon icon4;
-        icon4.addFile(QStringLiteral(":/MainWindowRes/edit_order.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actEditOrder->setIcon(icon4);
+        QIcon icon5;
+        icon5.addFile(QStringLiteral(":/MainWindowRes/edit_order.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actEditOrder->setIcon(icon5);
         actEditStaffMember = new QAction(MainWindow);
         actEditStaffMember->setObjectName(QStringLiteral("actEditStaffMember"));
-        QIcon icon5;
-        icon5.addFile(QStringLiteral(":/MainWindowRes/edit_staff.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actEditStaffMember->setIcon(icon5);
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/MainWindowRes/edit_staff.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actEditStaffMember->setIcon(icon6);
         actDeleteOperation = new QAction(MainWindow);
         actDeleteOperation->setObjectName(QStringLiteral("actDeleteOperation"));
-        QIcon icon6;
-        icon6.addFile(QStringLiteral(":/MainWindowRes/delete_oper.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actDeleteOperation->setIcon(icon6);
+        QIcon icon7;
+        icon7.addFile(QStringLiteral(":/MainWindowRes/delete_oper.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actDeleteOperation->setIcon(icon7);
         actDeleteOrder = new QAction(MainWindow);
         actDeleteOrder->setObjectName(QStringLiteral("actDeleteOrder"));
-        QIcon icon7;
-        icon7.addFile(QStringLiteral(":/MainWindowRes/delete_order.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actDeleteOrder->setIcon(icon7);
+        QIcon icon8;
+        icon8.addFile(QStringLiteral(":/MainWindowRes/delete_order.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actDeleteOrder->setIcon(icon8);
         actDeleteStaffMember = new QAction(MainWindow);
         actDeleteStaffMember->setObjectName(QStringLiteral("actDeleteStaffMember"));
-        QIcon icon8;
-        icon8.addFile(QStringLiteral(":/MainWindowRes/delete_staff.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actDeleteStaffMember->setIcon(icon8);
+        QIcon icon9;
+        icon9.addFile(QStringLiteral(":/MainWindowRes/delete_staff.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actDeleteStaffMember->setIcon(icon9);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         gridLayout = new QGridLayout(centralwidget);
@@ -120,31 +122,28 @@ public:
         operations->setObjectName(QStringLiteral("operations"));
         gridLayout_3 = new QGridLayout(operations);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
-        operNames = new QListView(operations);
-        operNames->setObjectName(QStringLiteral("operNames"));
-        operNames->setContextMenuPolicy(Qt::CustomContextMenu);
-        operNames->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-        gridLayout_3->addWidget(operNames, 0, 0, 1, 1);
-
         operDesc = new QPlainTextEdit(operations);
         operDesc->setObjectName(QStringLiteral("operDesc"));
         operDesc->setReadOnly(true);
 
         gridLayout_3->addWidget(operDesc, 0, 1, 1, 1);
 
+        operNames = new QTableView(operations);
+        operNames->setObjectName(QStringLiteral("operNames"));
+        operNames->setContextMenuPolicy(Qt::CustomContextMenu);
+        operNames->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        operNames->horizontalHeader()->setVisible(false);
+        operNames->horizontalHeader()->setHighlightSections(false);
+        operNames->verticalHeader()->setVisible(false);
+        operNames->verticalHeader()->setHighlightSections(false);
+
+        gridLayout_3->addWidget(operNames, 0, 0, 1, 1, Qt::AlignLeft);
+
         tabWidget->addTab(operations, QString());
         orders = new QWidget();
         orders->setObjectName(QStringLiteral("orders"));
         gridLayout_4 = new QGridLayout(orders);
         gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
-        orderNames = new QListView(orders);
-        orderNames->setObjectName(QStringLiteral("orderNames"));
-        orderNames->setContextMenuPolicy(Qt::CustomContextMenu);
-        orderNames->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-        gridLayout_4->addWidget(orderNames, 0, 0, 1, 1);
-
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         orderDesc = new QPlainTextEdit(orders);
@@ -163,6 +162,17 @@ public:
 
 
         gridLayout_4->addLayout(verticalLayout, 0, 1, 1, 1);
+
+        orderNames = new QTableView(orders);
+        orderNames->setObjectName(QStringLiteral("orderNames"));
+        orderNames->setContextMenuPolicy(Qt::CustomContextMenu);
+        orderNames->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        orderNames->horizontalHeader()->setVisible(false);
+        orderNames->horizontalHeader()->setHighlightSections(false);
+        orderNames->verticalHeader()->setVisible(false);
+        orderNames->verticalHeader()->setHighlightSections(false);
+
+        gridLayout_4->addWidget(orderNames, 0, 0, 1, 1, Qt::AlignLeft);
 
         tabWidget->addTab(orders, QString());
         staff = new QWidget();
@@ -202,7 +212,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(3);
+        tabWidget->setCurrentIndex(1);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -210,7 +220,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "ASU admin", 0));
         actNewOperation->setText(QApplication::translate("MainWindow", "New operation", 0));
 #ifndef QT_NO_TOOLTIP
         actNewOperation->setToolTip(QApplication::translate("MainWindow", "add new operation", 0));

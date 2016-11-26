@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSqlDatabase>
+#include <QModelIndex>
 
 namespace Ui {
 class MainWindow;
@@ -15,6 +16,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = Q_NULLPTR);
     ~MainWindow();
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 private slots:
     void on_actNewOperation_triggered();
     void on_actNewOrder_triggered();
@@ -35,11 +38,17 @@ private slots:
     void on_actDeleteOrder_triggered();
     void on_actDeleteStaffMember_triggered();
 
+    void operNames_selectionChanged();
+    void orderNames_selectionChanged();
+
 private:
+    void resizeTableHeader();
     void connectToDb();
     void refreshOperView();
     void refreshOrderView();
     void refreshStaffView();
+
+    void refreshAlgoTree(const QModelIndex& cur);
 
     void editOper(const QModelIndex& index);
     void editOrder(const QModelIndex& index);
