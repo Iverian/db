@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
-    //ui->concat_orders_str->hide();
+    ui->concat_orders_str->hide();
+
     connectDB();
     init();
 }
@@ -30,6 +31,11 @@ void MainWindow::init(){
     ui->lst_orders->setModel(queryModel);
     queryModel->setQuery("SELECT Id, Title as Orders FROM ordertypes");
     ui->lst_orders->setColumnHidden(0,true);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event){
+    QMainWindow::resizeEvent(event);
+    ui->lst_orders->horizontalHeader()->setDefaultSectionSize(ui->lst_orders->width());
 }
 
 MainWindow::~MainWindow()
@@ -97,13 +103,25 @@ void MainWindow::on_send_order_clicked()
         QString order_params = lst_orders.at(i);
         QStringList order_data = order_params.split(":");
         QString IdOrderType = order_data.at(0);
-        qDebug()<<IdOrderType;
+
         query.exec("SELECT COUNT(*) FROM Algorithm WHERE id_ordertype="+IdOrderType);
         query.next();
         QString num_operations = QString::number(query.value(0).toInt());
-        QString str = "INSERT INTO Orders(id_ordertype,id_client,numoperations) VALUES("+IdOrderType+","+client_id+","+num_operations+")";
-        qDebug()<<str;
-        query.exec(str);
+        query.exec("INSERT INTO Orders(id_ordertype,id_client,numoperations) VALUES("+IdOrderType+","+client_id+","+num_operations+")");
+
+        query.exec("SELECT Id FROM Orders WHERE Id=(SELECT MAX(Id) FROM Orders)");
+        query.next();
+        QString id_order = QString::number(query.value(0).toInt());
+
+        query.exec("SELECT Id_operationType FROM Algorithm WHERE Id_OrderType = "+IdOrderType+" AND Id NOT IN (SELECT Id_dependent FROM AlgDependencies)");
+        while(query.next()){
+            QSqlQuery qr;
+            QString id_operationtype = QString::number(query.value(0).toInt());
+            qr.exec("INSERT INTO Operations(id_operationtype,id_order) VALUES("+id_operationtype+","+id_order+")");
+        }
     }
     QSqlDatabase::database().commit();
+
+    ui->lst_client_orders->setModel(0);
+    ui->concat_orders_str->setText("");
 }
