@@ -4,17 +4,25 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = db_admin
 TEMPLATE = app
-
+CONFIG += c++11
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+    MainWindow.cpp \
+    AddNewOperation.cpp \
+    AddNewOrder.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += \
+    MainWindow.h \
+    AddNewOperation.h \
+    AddNewOrder.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    AddNewOperation.ui \
+    MainWindow.ui \
+    AddNewOrder.ui
