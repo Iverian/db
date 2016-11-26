@@ -7,6 +7,7 @@
 #include <QSqlDatabase>
 #include <QDebug>
 #include <windows.h>
+#include <QStandardItemModel>
 
 namespace Ui {
 class MainWindow;
@@ -20,11 +21,18 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+
+
+    void on_add_order_clicked();
+
+    void on_delete_client_order_clicked();
+
 private:
     Ui::MainWindow *ui;
-
     void connectDB();
     void init();
+    void add_new_order();
 };
 
 #endif // MAINWINDOW_H
