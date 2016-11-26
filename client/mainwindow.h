@@ -28,6 +28,8 @@ private slots:
 
     void on_delete_client_order_clicked();
 
+    void on_send_order_clicked();
+
 private:
     Ui::MainWindow *ui;
     void connectDB();

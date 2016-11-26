@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
-    ui->concat_orders_str->hide();
+    //ui->concat_orders_str->hide();
     connectDB();
     init();
 }
@@ -28,7 +28,8 @@ void MainWindow::init(){
     QSqlQuery query;
     QSqlQueryModel *queryModel = new QSqlQueryModel(this);
     ui->lst_orders->setModel(queryModel);
-    queryModel->setQuery("SELECT Title as Orders FROM order_type");
+    queryModel->setQuery("SELECT Id, Title as Orders FROM ordertypes");
+    ui->lst_orders->setColumnHidden(0,true);
 }
 
 MainWindow::~MainWindow()
@@ -39,8 +40,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_add_order_clicked()
 {
     QString selected_order = ui->lst_orders->model()->data(ui->lst_orders->currentIndex()).toString();
+    int row = ui->lst_orders->currentIndex().row();
+    QString selected_order_id = QString::number(ui->lst_orders->model()->index(row,0).data().toInt());
     QString orders_str = ui->concat_orders_str->text();
-    if (orders_str == "") ui->concat_orders_str->setText(selected_order);else ui->concat_orders_str->setText(orders_str+","+selected_order);
+    if (orders_str == "") ui->concat_orders_str->setText(selected_order_id+":"+selected_order);else ui->concat_orders_str->setText(orders_str+","+selected_order_id+":"+selected_order);
     add_new_order();
 }
 
@@ -49,8 +52,10 @@ void MainWindow::add_new_order(){
     QStandardItemModel *model = new QStandardItemModel();
     int num_orders = lst_orders.count();
     for (int i=0; i < num_orders; i++){
+        QString params = lst_orders.at(i);
+        QStringList lst_orders_data = params.split(":");
         QStandardItem *item = new QStandardItem();
-        item->setText(lst_orders.at(i));
+        item->setText(lst_orders_data.at(1));
         model->appendRow(item);
     }
     ui->lst_client_orders->setModel(model);
@@ -64,4 +69,41 @@ void MainWindow::on_delete_client_order_clicked()
     for( int i = 0; i < count; i++){
         ui->lst_client_orders->model()->removeRow(ui->lst_client_orders->selectionModel()->selectedRows().at(i).row(), QModelIndex());
     }
+
+    QStringList lst_orders = ui->concat_orders_str->text().split(",");
+    lst_orders.removeAt(index);
+
+    QString str="";
+    int n = lst_orders.count();
+    for (int j = 0; j< n; j++){
+        if (j == 0) str = str+lst_orders.at(j);else str = str+","+lst_orders.at(j);
+    }
+    ui->concat_orders_str->setText(str);
+}
+
+void MainWindow::on_send_order_clicked()
+{
+    QSqlQuery query;
+    QStringList lst_orders = ui->concat_orders_str->text().split(",");
+    QString num_orders = QString::number(lst_orders.count());
+
+    QSqlDatabase::database().transaction();
+    query.exec("INSERT INTO ClientOrders(NumOrders) VALUES("+num_orders+")");
+    query.exec("SELECT Id FROM ClientOrders WHERE Id=(SELECT MAX(Id) FROM ClientOrders)");
+    query.next();
+    QString client_id = QString::number(query.value(0).toInt());
+
+    for(int i=0; i < num_orders.toInt(); i++){
+        QString order_params = lst_orders.at(i);
+        QStringList order_data = order_params.split(":");
+        QString IdOrderType = order_data.at(0);
+        qDebug()<<IdOrderType;
+        query.exec("SELECT COUNT(*) FROM Algorithm WHERE id_ordertype="+IdOrderType);
+        query.next();
+        QString num_operations = QString::number(query.value(0).toInt());
+        QString str = "INSERT INTO Orders(id_ordertype,id_client,numoperations) VALUES("+IdOrderType+","+client_id+","+num_operations+")";
+        qDebug()<<str;
+        query.exec(str);
+    }
+    QSqlDatabase::database().commit();
 }
