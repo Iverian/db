@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>MainWindowRes/new_oper.png</file>
+        <file>MainWindowRes/new_order.png</file>
+        <file>MainWindowRes/new_staff.png</file>
+        <file>MainWindowRes/edit_oper.png</file>
+        <file>MainWindowRes/edit_order.png</file>
+        <file>MainWindowRes/edit_staff.png</file>
+        <file>MainWindowRes/delete_oper.png</file>
+        <file>MainWindowRes/delete_order.png</file>
+        <file>MainWindowRes/delete_staff.png</file>
+    </qresource>
+</RCC>

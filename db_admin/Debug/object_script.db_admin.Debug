@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\AddNewOperation.o
+./debug\AddNewOrder.o
+./debug\AddNewStaffMember.o
+./debug\MainWindow.o
+./debug\qrc_mainwindowres.o
+./debug\moc_AddNewOperation.o
+./debug\moc_AddNewOrder.o
+./debug\moc_AddNewStaffMember.o
+./debug\moc_MainWindow.o
+);

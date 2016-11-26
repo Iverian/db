@@ -31,6 +31,11 @@ void MainWindow::connectToDb()
     db.open();
 }
 
+void MainWindow::refreshOrderView()
+{
+    
+}
+
 void MainWindow::on_operNames_customContextMenuRequested(const QPoint &pos)
 {
     popupMenu(pos, ui->operNames->viewport(), {ui->actNewOperation, ui->actEditOperation, ui->actDeleteOperation}, this);

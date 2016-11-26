@@ -1,0 +1,12 @@
+INPUT(
+./release\main.o
+./release\AddNewOperation.o
+./release\AddNewOrder.o
+./release\AddNewStaffMember.o
+./release\MainWindow.o
+./release\qrc_mainwindowres.o
+./release\moc_AddNewOperation.o
+./release\moc_AddNewOrder.o
+./release\moc_AddNewStaffMember.o
+./release\moc_MainWindow.o
+);

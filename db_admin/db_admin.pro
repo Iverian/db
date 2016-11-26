@@ -13,16 +13,24 @@ TEMPLATE = app
 CONFIG += c++11
 
 SOURCES += main.cpp\
-    MainWindow.cpp \
     AddNewOperation.cpp \
-    AddNewOrder.cpp
+    AddNewOrder.cpp \
+    AddNewStaffMember.cpp \
+    MainWindow.cpp
 
 HEADERS  += \
-    MainWindow.h \
     AddNewOperation.h \
-    AddNewOrder.h
+    AddNewOrder.h \
+    AddNewStaffMember.h \
+    MainWindow.h \
+    helperTypes.h \
+    databaseConnectionParams.h
 
 FORMS    += \
     AddNewOperation.ui \
-    MainWindow.ui \
-    AddNewOrder.ui
+    AddNewOrder.ui \
+    AddNewStaffMember.ui \
+    MainWindow.ui
+
+RESOURCES += \
+    mainwindowres.qrc
