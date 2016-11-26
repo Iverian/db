@@ -67,7 +67,8 @@ DIST          =  ..\AddNewOperation.h \
 		..\AddNewOrder.h \
 		..\AddNewStaffMember.h \
 		..\MainWindow.h \
-		..\helperTypes.h ..\main.cpp \
+		..\helperTypes.h \
+		..\databaseConnectionParams.h ..\main.cpp \
 		..\AddNewOperation.cpp \
 		..\AddNewOrder.cpp \
 		..\AddNewStaffMember.cpp \
@@ -116,7 +117,13 @@ compiler_rcc_clean:
 release/qrc_mainwindowres.cpp: ../mainwindowres.qrc \
 		../MainWindowRes/new_staff.png \
 		../MainWindowRes/new_order.png \
-		../MainWindowRes/new_oper.png
+		../MainWindowRes/edit_staff.png \
+		../MainWindowRes/edit_order.png \
+		../MainWindowRes/new_oper.png \
+		../MainWindowRes/edit_oper.png \
+		../MainWindowRes/delete_staff.png \
+		../MainWindowRes/delete_oper.png \
+		../MainWindowRes/delete_order.png
 	C:\Qt\Qt5.6.2\5.6\mingw49_32\bin\rcc.exe -name mainwindowres ..\mainwindowres.qrc -o release\qrc_mainwindowres.cpp
 
 compiler_moc_header_make_all: release/moc_AddNewOperation.cpp release/moc_AddNewOrder.cpp release/moc_AddNewStaffMember.cpp release/moc_MainWindow.cpp
@@ -555,6 +562,9 @@ release/moc_MainWindow.cpp: C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QMain
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qtouchdevice.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtabwidget.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qicon.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlDatabase \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqldatabase.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsql.h \
 		../MainWindow.h
 	C:\Qt\Qt5.6.2\5.6\mingw49_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/Qt5.6.2/5.6/mingw49_32/mkspecs/win32-g++ -IC:/Users/trololo/Documents/C++/files/db/db_admin -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtANGLE -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore -I. ..\MainWindow.h -o release\moc_MainWindow.cpp
 
@@ -695,6 +705,9 @@ release/main.o: ../main.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qtouchdevice.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtabwidget.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qicon.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlDatabase \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqldatabase.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsql.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QApplication \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qapplication.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/qcoreapplication.h \
@@ -1314,6 +1327,9 @@ release/MainWindow.o: ../MainWindow.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qtouchdevice.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtabwidget.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qicon.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlDatabase \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqldatabase.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsql.h \
 		ui_MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/QVariant \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QAction \
@@ -1333,7 +1349,6 @@ release/MainWindow.o: ../MainWindow.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qlayout.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qlayoutitem.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qboxlayout.h \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QHBoxLayout \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QHeaderView \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qheaderview.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qabstractitemview.h \
@@ -1366,14 +1381,20 @@ release/MainWindow.o: ../MainWindow.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qglyphrun.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qrawfont.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui/qfontdatabase.h \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QPushButton \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qpushbutton.h \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qabstractbutton.h \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QSpacerItem \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QTabWidget \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QTableView \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtableview.h \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QWidget
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QToolBar \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtoolbar.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QTreeView \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtreeview.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QVBoxLayout \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QWidget \
+		../databaseConnectionParams.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QMenu \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qmenu.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlQueryModel \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqlquerymodel.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\MainWindow.o ..\MainWindow.cpp
 
 release/qrc_mainwindowres.o: release/qrc_mainwindowres.cpp 
