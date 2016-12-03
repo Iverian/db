@@ -48,7 +48,7 @@ private:
     void refreshOrderView();
     void refreshStaffView();
 
-    void refreshAlgoTree(const QModelIndex& cur);
+    void refreshAlgoTree();
 
     void editOper(const QModelIndex& index);
     void editOrder(const QModelIndex& index);
