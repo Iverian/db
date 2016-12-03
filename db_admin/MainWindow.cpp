@@ -33,6 +33,7 @@
 
 void popupMenu(
     const QPoint& pos, QWidget* viewport, const std::initializer_list<QAction*>& actList, QWidget* parent);
+int sqlSelectCountHelper(const QString& text, const QSqlDatabase& db = QSqlDatabase::database());
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
@@ -70,7 +71,7 @@ void MainWindow::connectToDb()
 
 void MainWindow::refreshOperView()
 {
-    auto found = refreshTableHelper(ui->operNames, "select Id, Title, Description from OperationTypes");
+    auto found = refreshTableHelper(ui->operNames, "SELECT Id, Title, Description FROM OperationTypes");
 
 	ui->operNames->setColumnHidden(0, true);
 	ui->operNames->setColumnHidden(2, true);
@@ -108,7 +109,7 @@ void MainWindow::refreshStaffView()
 		ui->staffView->setCurrentIndex(found);
 }
 
-void MainWindow::refreshAlgoTree(const QModelIndex& cur) {}
+void MainWindow::refreshAlgoTree() {}
 
 void MainWindow::on_operNames_customContextMenuRequested(const QPoint& pos)
 {
@@ -159,40 +160,57 @@ void MainWindow::on_actDeleteOperation_triggered()
 {
     auto id = ui->operNames->model()->index(ui->operNames->currentIndex().row(), 0).data().toString();
 
-    auto q
-        = db.exec("SELECT COUNT(*) FROM Operations WHERE Status = true AND Id_operationType = " + id + ";");
-	q.next();
-    if (q.value(0).toInt())
+    db.transaction();
+    auto activeOrderCount = sqlSelectCountHelper(
+        "WITH DependentOrders AS (SELECT Id_orderType FROM Algorithm WHERE Id_operationType = " + id
+            + ")"
+              "SELECT COUNT (*) FROM Orders WHERE Id_orderType IN DependentOrders AND NumOperations <> 0;",
+        db);
+    if (activeOrderCount != 0)
         QMessageBox::critical(
-            this, "Action forbidden!", "Unable to delete active operation", QMessageBox::Ok);
+            this, "Action forbidden!", "Unable to deactivate used operation", QMessageBox::Ok);
     else {
-        auto confirm = QMessageBox::critical(
-            this, "Confirm action", "This action cannot be undone", QMessageBox::Ok, QMessageBox::Cancel);
-        if (confirm == QMessageBox::Ok) {
-            db.transaction();
-            q = QSqlQuery(db);
+        auto confirm = QMessageBox::warning(this, "Confirm action",
+            "All dependant Orders will be deactivated too", QMessageBox::Ok, QMessageBox::Cancel);
+        if (confirm == QMessageBox::Ok)
+            db.exec("UPDATE OperationTypes IsActive = false WHERE Id = " + id
+                + ";"
+                  "WITH DependentOrders AS (SELECT Id_orderType FROM Algorithm WHERE Id_operationType = "
+                + id + ")"
+                       "UPDATE OrderTypes IsActive = false WHERE Id IN DependentOrders;");
+    }
+    db.commit();
 
-            q.exec("DELETE FROM OrderTypes WHERE Id IN"
-                   "(SELECT Id_orderType FROM Algorithm WHERE Id_operationType = "
-                + id + ");");
-            q.exec("WITH AlgoOper AS (SELECT Id FROM Algorithm WHERE Id_operationType = " + id
-                + ")"
-                  "DELETE FROM AlgDependencies WHERE (Id_parent IN AlgoOper) OR (Id_dependent IN "
-                  "AlgoOper);");
-            q.exec("DELETE FROM Algorithm WHERE Id_operationType = " + id + ";");
-            q.exec("DELETE FROM Skills WHERE Id_operationType = " + id + ";");
-            q.exec("DELETE FROM OperationTypes WHERE Id = " + id + ";");
-            db.commit();
-        }
-	}
     refreshOperView();
     refreshOrderView();
-    refreshStaffView();
+    refreshAlgoTree();
 }
 
-void MainWindow::on_actDeleteOrder_triggered() {}
+void MainWindow::on_actDeleteOrder_triggered()
+{
+    auto id = ui->orderNames->model()->index(ui->orderNames->currentIndex().row(), 0).data().toString();
 
-void MainWindow::on_actDeleteStaffMember_triggered() {}
+    db.transaction();
+    auto activeOrderCount
+        = sqlSelectCountHelper("SELECT COUNT (*) FROM Orders WHERE Id_orderType = " + id + ";");
+    if (activeOrderCount != 0)
+        QMessageBox::critical(
+            this, "Action forbidden!", "Unable to deactivate running order", QMessageBox::Ok);
+    else {
+        auto confirm = QMessageBox::warning(this, "Confirm action", "Order will become inactive for clients",
+            QMessageBox::Ok, QMessageBox::Cancel);
+        if (confirm == QMessageBox::Ok)
+            db.exec("UPDATE OrderTypes IsActive = false WHERE Id = " + id + ";");
+    }
+    db.commit();
+
+    refreshOrderView();
+    refreshAlgoTree();
+}
+
+void MainWindow::on_actDeleteStaffMember_triggered() {
+
+}
 
 void MainWindow::operNames_selectionChanged()
 {
@@ -219,4 +237,11 @@ void MainWindow::resizeTableHeader()
 {
 	ui->operNames->horizontalHeader()->setDefaultSectionSize(ui->operNames->width());
 	ui->orderNames->horizontalHeader()->setDefaultSectionSize(ui->orderNames->width());
+}
+
+int sqlSelectCountHelper(const QString& text, const QSqlDatabase& db)
+{
+    auto q = db.exec(text);
+    q.next();
+    return q.value(0).toInt();
 }
