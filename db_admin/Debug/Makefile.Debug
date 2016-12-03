@@ -13,7 +13,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DUNICODE -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_SQL_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
 CFLAGS        = -pipe -fno-keep-inline-dllexport -g -Wall -Wextra $(DEFINES)
-CXXFLAGS      = -pipe -fno-keep-inline-dllexport -g -std=gnu++0x -frtti -Wall -Wextra -fexceptions -mthreads $(DEFINES)
+CXXFLAGS      = -pipe -fno-keep-inline-dllexport -g -std=gnu++1y -frtti -Wall -Wextra -fexceptions -mthreads $(DEFINES)
 INCPATH       = -I..\..\db_admin -I. -IC:\Qt\Qt5.6.2\5.6\mingw49_32\include -IC:\Qt\Qt5.6.2\5.6\mingw49_32\include\QtWidgets -IC:\Qt\Qt5.6.2\5.6\mingw49_32\include\QtGui -IC:\Qt\Qt5.6.2\5.6\mingw49_32\include\QtANGLE -IC:\Qt\Qt5.6.2\5.6\mingw49_32\include\QtSql -IC:\Qt\Qt5.6.2\5.6\mingw49_32\include\QtCore -Idebug -I. -IC:\Qt\Qt5.6.2\5.6\mingw49_32\mkspecs\win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-subsystem,windows -mthreads
@@ -121,6 +121,7 @@ debug/qrc_mainwindowres.cpp: ../mainwindowres.qrc \
 		../MainWindowRes/edit_order.png \
 		../MainWindowRes/new_oper.png \
 		../MainWindowRes/edit_oper.png \
+		../MainWindowRes/abacus.png \
 		../MainWindowRes/delete_staff.png \
 		../MainWindowRes/delete_oper.png \
 		../MainWindowRes/delete_order.png
@@ -565,6 +566,8 @@ debug/moc_MainWindow.cpp: C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QMainWi
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlDatabase \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqldatabase.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsql.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/QModelIndex \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/qabstractitemmodel.h \
 		../MainWindow.h
 	C:\Qt\Qt5.6.2\5.6\mingw49_32\bin\moc.exe $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/Qt5.6.2/5.6/mingw49_32/mkspecs/win32-g++ -IC:/Users/trololo/Documents/C++/files/db/db_admin -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtGui -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtANGLE -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql -IC:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore -I. ..\MainWindow.h -o debug\moc_MainWindow.cpp
 
@@ -708,6 +711,8 @@ debug/main.o: ../main.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlDatabase \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqldatabase.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsql.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/QModelIndex \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/qabstractitemmodel.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QApplication \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qapplication.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/qcoreapplication.h \
@@ -1330,6 +1335,9 @@ debug/MainWindow.o: ../MainWindow.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlDatabase \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqldatabase.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsql.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/QModelIndex \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/qabstractitemmodel.h \
+		../databaseConnectionParams.h \
 		../debug/ui_MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/QVariant \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QAction \
@@ -1354,7 +1362,6 @@ debug/MainWindow.o: ../MainWindow.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qabstractitemview.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qabstractscrollarea.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qframe.h \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/qabstractitemmodel.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/qitemselectionmodel.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qabstractitemdelegate.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qstyleoption.h \
@@ -1366,8 +1373,6 @@ debug/MainWindow.o: ../MainWindow.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qstyle.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtabbar.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qrubberband.h \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QListView \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qlistview.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QPlainTextEdit \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qplaintextedit.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtextedit.h \
@@ -1390,11 +1395,13 @@ debug/MainWindow.o: ../MainWindow.cpp ../MainWindow.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qtreeview.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QVBoxLayout \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QWidget \
-		../databaseConnectionParams.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/QMenu \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtWidgets/qmenu.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlQuery \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqlquery.h \
 		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/QSqlQueryModel \
-		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqlquerymodel.h
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtSql/qsqlquerymodel.h \
+		C:/Qt/Qt5.6.2/5.6/mingw49_32/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\MainWindow.o ..\MainWindow.cpp
 
 debug/qrc_mainwindowres.o: debug/qrc_mainwindowres.cpp 

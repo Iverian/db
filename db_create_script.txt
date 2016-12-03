@@ -1,10 +1,12 @@
 CREATE TABLE OperationTypes (Id serial primary key,
                              Title varchar(50),
+                             IsActive bool,
                              Description text
                             );
 
 CREATE TABLE OrderTypes (Id serial primary key,
                          Title varchar(50),
+                         IsActive bool,
                          Description text
                         );
 
@@ -16,9 +18,9 @@ CREATE TABLE Algorithm (Id serial primary key,
                         );
 
 CREATE TABLE AlgDependencies (Id_parent integer,
-                              Id_child integer,
+                              Id_dependent integer,
                               foreign key(Id_parent) references Algorithm(Id),
-                              foreign key(Id_child) references Algorithm(Id)
+                              foreign key(Id_dependent) references Algorithm(Id)
                               );
 
 CREATE TABLE Staff(Id serial primary key,

@@ -132,6 +132,7 @@ public:
         operNames->setObjectName(QStringLiteral("operNames"));
         operNames->setContextMenuPolicy(Qt::CustomContextMenu);
         operNames->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        operNames->setShowGrid(false);
         operNames->horizontalHeader()->setVisible(false);
         operNames->horizontalHeader()->setHighlightSections(false);
         operNames->verticalHeader()->setVisible(false);
@@ -167,6 +168,7 @@ public:
         orderNames->setObjectName(QStringLiteral("orderNames"));
         orderNames->setContextMenuPolicy(Qt::CustomContextMenu);
         orderNames->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        orderNames->setShowGrid(false);
         orderNames->horizontalHeader()->setVisible(false);
         orderNames->horizontalHeader()->setHighlightSections(false);
         orderNames->verticalHeader()->setVisible(false);
