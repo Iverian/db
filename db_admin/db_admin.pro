@@ -13,24 +13,26 @@ TEMPLATE = app
 CONFIG += c++14
 
 SOURCES += main.cpp\
-    AddNewOperation.cpp \
-    AddNewOrder.cpp \
-    AddNewStaffMember.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    OperationEdit.cpp \
+    utility.cpp \
+    OrderEdit.cpp \
+    OrderDependencyEdit.cpp
 
 HEADERS  += \
-    AddNewOperation.h \
-    AddNewOrder.h \
-    AddNewStaffMember.h \
     MainWindow.h \
     helperTypes.h \
-    databaseConnectionParams.h
+    databaseConnectionParams.h \
+    OperationEdit.h \
+    utility.h \
+    OrderEdit.h \
+    OrderDependencyEdit.h
 
 FORMS    += \
-    AddNewOperation.ui \
-    AddNewOrder.ui \
-    AddNewStaffMember.ui \
-    MainWindow.ui
+    MainWindow.ui \
+    OperationEdit.ui \
+    OrderEdit.ui \
+    OrderDependencyEdit.ui
 
 RESOURCES += \
     mainwindowres.qrc

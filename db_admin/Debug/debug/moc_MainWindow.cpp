@@ -39,8 +39,8 @@ QT_MOC_LITERAL(6, 137, 3), // "pos"
 QT_MOC_LITERAL(7, 141, 40), // "on_orderNames_customContextMe..."
 QT_MOC_LITERAL(8, 182, 39), // "on_staffView_customContextMen..."
 QT_MOC_LITERAL(9, 222, 26), // "on_operNames_doubleClicked"
-QT_MOC_LITERAL(10, 249, 5), // "index"
-QT_MOC_LITERAL(11, 255, 27), // "on_orderNames_doubleClicked"
+QT_MOC_LITERAL(10, 249, 27), // "on_orderNames_doubleClicked"
+QT_MOC_LITERAL(11, 277, 5), // "index"
 QT_MOC_LITERAL(12, 283, 26), // "on_staffView_doubleClicked"
 QT_MOC_LITERAL(13, 310, 29), // "on_actEditOperation_triggered"
 QT_MOC_LITERAL(14, 340, 25), // "on_actEditOrder_triggered"
@@ -58,8 +58,8 @@ QT_MOC_LITERAL(20, 519, 27) // "orderNames_selectionChanged"
     "on_operNames_customContextMenuRequested\0"
     "pos\0on_orderNames_customContextMenuRequested\0"
     "on_staffView_customContextMenuRequested\0"
-    "on_operNames_doubleClicked\0index\0"
-    "on_orderNames_doubleClicked\0"
+    "on_operNames_doubleClicked\0"
+    "on_orderNames_doubleClicked\0index\0"
     "on_staffView_doubleClicked\0"
     "on_actEditOperation_triggered\0"
     "on_actEditOrder_triggered\0"
@@ -93,7 +93,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,    1,  105,    2, 0x08 /* Private */,
        8,    1,  108,    2, 0x08 /* Private */,
        9,    1,  111,    2, 0x08 /* Private */,
-      11,    1,  114,    2, 0x08 /* Private */,
+      10,    1,  114,    2, 0x08 /* Private */,
       12,    1,  117,    2, 0x08 /* Private */,
       13,    0,  120,    2, 0x08 /* Private */,
       14,    0,  121,    2, 0x08 /* Private */,
@@ -111,9 +111,9 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void, QMetaType::QPoint,    6,
     QMetaType::Void, QMetaType::QPoint,    6,
     QMetaType::Void, QMetaType::QPoint,    6,
-    QMetaType::Void, QMetaType::QModelIndex,   10,
-    QMetaType::Void, QMetaType::QModelIndex,   10,
-    QMetaType::Void, QMetaType::QModelIndex,   10,
+    QMetaType::Void, QMetaType::QModelIndex,    2,
+    QMetaType::Void, QMetaType::QModelIndex,   11,
+    QMetaType::Void, QMetaType::QModelIndex,   11,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,

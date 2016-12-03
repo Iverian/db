@@ -1,45 +1,43 @@
-CREATE TYPE OpStatus AS ENUM ('available', 'running', 'completed');
-CREATE TYPE StaffStatus AS ENUM ('deactivated', 'available', 'logged_in');
-
 CREATE TABLE OperationTypes (Id serial primary key,
-                             Title varchar(50),
-                             IsActive bool,
-                             Description text
-                            );
+                             Title varchar(50) unique,
+                             IsActive bool default true,
+                             Description text default ' '
+                             );
 
 CREATE TABLE OrderTypes (Id serial primary key,
-                         Title varchar(50),
-                         IsActive bool,
-                         Description text
-                        );
+                         Title varchar(50) unique,
+                         IsActive bool default true,
+                         Description text default ' '
+                         );
 
 CREATE TABLE Algorithm (Id serial primary key,
                         Id_orderType integer,
                         Id_operationType integer,
                         foreign key(Id_orderType) references OrderTypes(Id),
-                        foreign key(Id_operationType) references OperationTypes(Id)
+                        foreign key(Id_operationType) references OperationTypes(Id),
                         );
 
 CREATE TABLE AlgDependencies (Id_parent integer,
                               Id_dependent integer,
                               foreign key(Id_parent) references Algorithm(Id),
-                              foreign key(Id_dependent) references Algorithm(Id)
+                              foreign key(Id_dependent) references Algorithm(Id),
+                              constraint sameOrder check() 
                               );
 
+CREATE TYPE StaffStatus AS ENUM ('deactivated', 'available', 'logged_in' );
+
 CREATE TABLE Staff(Id serial primary key,
-                   Name varchar(50),
-                   Status StaffStatus default 'available',
+                   Name varchar(50) unique,
+                   Status StaffStatus default 'available'
                    );
 
 CREATE TABLE Skills(Id_staff integer,
                     Id_operationType integer,
                     foreign key(Id_staff) references Staff(Id),
                     foreign key(Id_operationType) references OperationTypes(Id)
-                    );
-                    
-CREATE TABLE ClientOrders(Id serial primary key,
-                          NumOrders integer
-                        );
+                    );     
+
+CREATE TABLE ClientOrders(Id serial primary key, NumOrders integer);
 
 CREATE TABLE Orders(Id serial primary key,
                     Id_orderType integer,
@@ -48,7 +46,9 @@ CREATE TABLE Orders(Id serial primary key,
                     foreign key(Id_orderType) references OrderTypes(Id),
                     foreign key(Id_client) references ClientOrders(Id)
                     );
-                    
+
+CREATE TYPE OpStatus AS ENUM ('available', 'running', 'completed');
+
 CREATE TABLE Operations(Id serial primary key,
                         Id_operationType integer,
                         Id_order integer,
@@ -57,4 +57,15 @@ CREATE TABLE Operations(Id serial primary key,
                         foreign key(Id_operationType) references OperationTypes(Id),
                         foreign key(Id_order) references Orders(Id)
                         );
-          
+
+CREATE TABLE RunningAlgo(Id serial primary key,
+						 Id_operationType integer,
+						 Id_operation integer default 0,
+						 foreign key(Id_operationType) references OperationTypes(id)
+						 );
+
+CREATE TABLE RunAlgoDepends(Id_parent integer,
+							Id_dependent integer,
+							foreign key(Id_parent) references RunningAlgo(Id),
+							foreign key(Id_dependent) references RunningAlgo(Id)
+							);

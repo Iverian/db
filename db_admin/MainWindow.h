@@ -27,7 +27,7 @@ private slots:
     void on_orderNames_customContextMenuRequested(const QPoint &pos);
     void on_staffView_customContextMenuRequested(const QPoint &pos);
 
-    void on_operNames_doubleClicked(const QModelIndex &index);
+    void on_operNames_doubleClicked(const QModelIndex&);
     void on_orderNames_doubleClicked(const QModelIndex &index);
     void on_staffView_doubleClicked(const QModelIndex &index);
     void on_actEditOperation_triggered();

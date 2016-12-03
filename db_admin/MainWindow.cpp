@@ -1,6 +1,8 @@
 #include "MainWindow.h"
+#include "OperationEdit.h"
 #include "databaseConnectionParams.h"
 #include "ui_MainWindow.h"
+#include "utility.h"
 
 #include <QMenu>
 #include <QMessageBox>
@@ -9,31 +11,10 @@
 
 #include <QDebug>
 
-#define refreshTableHelper(_table_view_, _query_)                                                           \
-    [this]() {                                                                                              \
-        QModelIndex __retval;                                                                               \
-        auto __queryModel = new QSqlQueryModel;                                                             \
-        auto __sel = (_table_view_)->currentIndex();                                                        \
-        __queryModel->setQuery(_query_, db);                                                                \
-        auto __found = -1;                                                                                  \
-        if (__sel.row() != -1) {                                                                            \
-            auto __q = __queryModel->query();                                                               \
-            auto __cur = (_table_view_)->model()->index(__sel.row(), 0).data().toInt();                     \
-            for (auto __i = 0; __q.next(); ++__i)                                                           \
-                if (__q.value(0).toInt() == __cur) {                                                        \
-                    __found = __i;                                                                          \
-                    break;                                                                                  \
-                }                                                                                           \
-        }                                                                                                   \
-        if (__found != -1)                                                                                  \
-            __retval = (_table_view_)->model()->index(__found, __sel.column());                             \
-        (_table_view_)->setModel(__queryModel);                                                             \
-        return __retval;                                                                                    \
-	}()
-
 void popupMenu(
     const QPoint& pos, QWidget* viewport, const std::initializer_list<QAction*>& actList, QWidget* parent);
-int sqlSelectCountHelper(const QString& text, const QSqlDatabase& db = QSqlDatabase::database());
+
+QModelIndex refreshTableHelper(QTableView* tableView, const QString& query, QSqlDatabase& db);
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
@@ -71,7 +52,7 @@ void MainWindow::connectToDb()
 
 void MainWindow::refreshOperView()
 {
-    auto found = refreshTableHelper(ui->operNames, "SELECT Id, Title, Description FROM OperationTypes");
+    auto found = refreshTableHelper(ui->operNames, "SELECT Id, Title, Description FROM OperationTypes", db);
 
 	ui->operNames->setColumnHidden(0, true);
 	ui->operNames->setColumnHidden(2, true);
@@ -87,7 +68,7 @@ void MainWindow::refreshOperView()
 
 void MainWindow::refreshOrderView()
 {
-    auto found = refreshTableHelper(ui->orderNames, "select Id, Title, Description from OrderTypes");
+    auto found = refreshTableHelper(ui->orderNames, "SELECT Id, Title, Description FROM OrderTypes", db);
 
 	ui->orderNames->setColumnHidden(0, true);
 	ui->orderNames->setColumnHidden(2, true);
@@ -104,7 +85,7 @@ void MainWindow::refreshOrderView()
 
 void MainWindow::refreshStaffView()
 {
-	auto found = refreshTableHelper(ui->staffView, "select Id, Name from Staff");
+    auto found = refreshTableHelper(ui->staffView, "SELECT Id, Name FROM Staff", db);
 	if (found.isValid())
 		ui->staffView->setCurrentIndex(found);
 }
@@ -125,8 +106,8 @@ void MainWindow::on_orderNames_customContextMenuRequested(const QPoint& pos)
 
 void MainWindow::on_staffView_customContextMenuRequested(const QPoint& pos)
 {
-	popupMenu(pos, ui->staffView->viewport(),
-		{ ui->actNewStaffMember, ui->actEditStaffMember, ui->actDeleteStaffMember }, this);
+    popupMenu(pos, ui->staffView->viewport(),
+        { ui->actNewStaffMember, ui->actEditStaffMember, ui->actDeleteStaffMember }, this);
 }
 
 void popupMenu(const QPoint& pos, QWidget* viewport, const std::initializer_list<QAction*>& actList,
@@ -138,19 +119,28 @@ void popupMenu(const QPoint& pos, QWidget* viewport, const std::initializer_list
 	menu->popup(viewport->mapToGlobal(pos));
 }
 
-void MainWindow::on_actNewOperation_triggered() {}
+void MainWindow::on_actNewOperation_triggered()
+{
+    OperationEdit::add(this, db);
+    refreshOperView();
+}
 
 void MainWindow::on_actNewOrder_triggered() {}
 
 void MainWindow::on_actNewStaffMember_triggered() {}
 
-void MainWindow::on_operNames_doubleClicked(const QModelIndex& index) {}
+void MainWindow::on_operNames_doubleClicked(const QModelIndex&) { on_actEditOperation_triggered(); }
 
 void MainWindow::on_orderNames_doubleClicked(const QModelIndex& index) {}
 
 void MainWindow::on_staffView_doubleClicked(const QModelIndex& index) {}
 
-void MainWindow::on_actEditOperation_triggered() {}
+void MainWindow::on_actEditOperation_triggered()
+{
+    OperationEdit::edit(
+        this, db, ui->operNames->model()->index(ui->operNames->currentIndex().row(), 0).data().toInt());
+    refreshOperView();
+}
 
 void MainWindow::on_actEditOrder_triggered() {}
 
@@ -161,7 +151,7 @@ void MainWindow::on_actDeleteOperation_triggered()
     auto id = ui->operNames->model()->index(ui->operNames->currentIndex().row(), 0).data().toString();
 
     db.transaction();
-    auto activeOrderCount = sqlSelectCountHelper(
+    auto activeOrderCount = getFirstIntQueryVal(
         "WITH DependentOrders AS (SELECT Id_orderType FROM Algorithm WHERE Id_operationType = " + id
             + ")"
               "SELECT COUNT (*) FROM Orders WHERE Id_orderType IN DependentOrders AND NumOperations <> 0;",
@@ -191,8 +181,8 @@ void MainWindow::on_actDeleteOrder_triggered()
     auto id = ui->orderNames->model()->index(ui->orderNames->currentIndex().row(), 0).data().toString();
 
     db.transaction();
-    auto activeOrderCount
-        = sqlSelectCountHelper("SELECT COUNT (*) FROM Orders WHERE Id_orderType = " + id + ";");
+    auto activeOrderCount = getFirstIntQueryVal(
+        "SELECT COUNT (*) FROM Orders WHERE Id_orderType = " + id + " AND NumOperations <> 0;", db);
     if (activeOrderCount != 0)
         QMessageBox::critical(
             this, "Action forbidden!", "Unable to deactivate running order", QMessageBox::Ok);
@@ -208,8 +198,27 @@ void MainWindow::on_actDeleteOrder_triggered()
     refreshAlgoTree();
 }
 
-void MainWindow::on_actDeleteStaffMember_triggered() {
+void MainWindow::on_actDeleteStaffMember_triggered()
+{
+    auto id = ui->staffView->model()->index(ui->staffView->currentIndex().row(), 0).data().toString();
 
+    db.transaction();
+    auto activeOperCount = getFirstIntQueryVal(
+        "SELECT COUNT (*) FROM Operations WHERE Id_staff = " + id + " AND Status = 'running';", db);
+    auto staffStatus = getFirstIntQueryVal("SELECT Status FROM Staff WHERE Id = " + id + ";");
+    // TODO: проверить как ведет себя Qt с ENUM типами PSQL
+    if (activeOperCount != 0 || staffStatus == 2)
+        QMessageBox::critical(
+            this, "Action forbidden!", "Unable to deactivate working staff member", QMessageBox::Ok);
+    else {
+        auto confirm = QMessageBox::warning(this, "Confirm action", "Staff member will be unable to work",
+            QMessageBox::Ok, QMessageBox::Cancel);
+        if (confirm == QMessageBox::Ok)
+            db.exec("UPDATE Staff StaffStatus = 'deactivated' WHERE Id = " + id + ";");
+    }
+    db.commit();
+
+    refreshStaffView();
 }
 
 void MainWindow::operNames_selectionChanged()
@@ -230,7 +239,7 @@ void MainWindow::orderNames_selectionChanged()
 		ui->orderDesc->clear();
 		ui->orderDesc->insertPlainText(query.value(2).toString());
 	}
-	refreshAlgoTree(cur);
+    refreshAlgoTree();
 }
 
 void MainWindow::resizeTableHeader()
@@ -239,9 +248,24 @@ void MainWindow::resizeTableHeader()
 	ui->orderNames->horizontalHeader()->setDefaultSectionSize(ui->orderNames->width());
 }
 
-int sqlSelectCountHelper(const QString& text, const QSqlDatabase& db)
+QModelIndex refreshTableHelper(QTableView* tableView, const QString& query, QSqlDatabase& db)
 {
-    auto q = db.exec(text);
-    q.next();
-    return q.value(0).toInt();
+    QModelIndex retval;
+    auto queryModel = new QSqlQueryModel;
+    auto sel = tableView->currentIndex();
+    queryModel->setQuery(query, db);
+    auto found = -1;
+    if (sel.row() != -1) {
+        auto q = queryModel->query();
+        auto cur = tableView->model()->index(sel.row(), 0).data().toInt();
+        for (auto i = 0; q.next(); ++i)
+            if (q.value(0).toInt() == cur) {
+                found = i;
+                break;
+            }
+    }
+    if (found != -1)
+        retval = tableView->model()->index(found, sel.column());
+    tableView->setModel(queryModel);
+    return retval;
 }
