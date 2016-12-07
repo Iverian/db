@@ -21,7 +21,6 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     MainWindow.h \
-    helperTypes.h \
     databaseConnectionParams.h \
     OperationEdit.h \
     utility.h \

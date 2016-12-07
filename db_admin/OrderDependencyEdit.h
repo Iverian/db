@@ -4,32 +4,21 @@
 #include <QDialog>
 #include <QSqlDatabase>
 
+#include "OrderEdit.h"
+
 namespace Ui {
 class OrderDependencyEdit;
 }
 
-class MyCheckBox : public QCheckBox {
-    Q_OBJECT
-public:
-    using QCheckBox::QCheckBox;
-    int& id();
-    const int& id() const;
-
-private:
-    int m_id;
-};
-
 class OrderDependencyEdit : public QDialog {
     Q_OBJECT
 public:
-    static void edit(QWidget* parent, QSqlDatabase& db, int orderId);
+    static void edit(QWidget* parent, QVector<dependItem>& list, QSqlQuery operNames);
     ~OrderDependencyEdit();
 
 private:
-    explicit OrderDependencyEdit(QWidget* parent, int orderId, int operId);
-    void setupList(const QSqlQuery& q);
+    explicit OrderDependencyEdit(QWidget* parent);
+    QVector<QCheckBox*> setupList(QVector<dependItem>& list, QSqlQuery &operNames);
 
-    int m_operId;
-    int m_orderId;
     Ui::OrderDependencyEdit* ui;
 };

@@ -15,9 +15,9 @@ class OperationEdit : public QDialog {
     };
 
 public:
+    ~OperationEdit();
     static void add(QWidget* parent, QSqlDatabase& db);
     static void edit(QWidget* parent, QSqlDatabase& db, int operId);
-    ~OperationEdit();
 
 private slots:
     void on_lineEdit_editingFinished();
@@ -28,5 +28,6 @@ private:
 
     QSqlDatabase& m_db;
     int m_id;
+    QStringList m_names;
     Ui::OperationEdit* m_ui;
 };

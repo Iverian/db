@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'MainWindow.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.6.2)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,15 +12,15 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'MainWindow.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.6.2. It"
+#error "This file was generated using the moc from 5.7.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[21];
-    char stringdata0[547];
+    QByteArrayData data[20];
+    char stringdata0[541];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -40,16 +40,15 @@ QT_MOC_LITERAL(7, 141, 40), // "on_orderNames_customContextMe..."
 QT_MOC_LITERAL(8, 182, 39), // "on_staffView_customContextMen..."
 QT_MOC_LITERAL(9, 222, 26), // "on_operNames_doubleClicked"
 QT_MOC_LITERAL(10, 249, 27), // "on_orderNames_doubleClicked"
-QT_MOC_LITERAL(11, 277, 5), // "index"
-QT_MOC_LITERAL(12, 283, 26), // "on_staffView_doubleClicked"
-QT_MOC_LITERAL(13, 310, 29), // "on_actEditOperation_triggered"
-QT_MOC_LITERAL(14, 340, 25), // "on_actEditOrder_triggered"
-QT_MOC_LITERAL(15, 366, 31), // "on_actEditStaffMember_triggered"
-QT_MOC_LITERAL(16, 398, 31), // "on_actDeleteOperation_triggered"
-QT_MOC_LITERAL(17, 430, 27), // "on_actDeleteOrder_triggered"
-QT_MOC_LITERAL(18, 458, 33), // "on_actDeleteStaffMember_trigg..."
-QT_MOC_LITERAL(19, 492, 26), // "operNames_selectionChanged"
-QT_MOC_LITERAL(20, 519, 27) // "orderNames_selectionChanged"
+QT_MOC_LITERAL(11, 277, 26), // "on_staffView_doubleClicked"
+QT_MOC_LITERAL(12, 304, 29), // "on_actEditOperation_triggered"
+QT_MOC_LITERAL(13, 334, 25), // "on_actEditOrder_triggered"
+QT_MOC_LITERAL(14, 360, 31), // "on_actEditStaffMember_triggered"
+QT_MOC_LITERAL(15, 392, 31), // "on_actDeleteOperation_triggered"
+QT_MOC_LITERAL(16, 424, 27), // "on_actDeleteOrder_triggered"
+QT_MOC_LITERAL(17, 452, 33), // "on_actDeleteStaffMember_trigg..."
+QT_MOC_LITERAL(18, 486, 26), // "operNames_selectionChanged"
+QT_MOC_LITERAL(19, 513, 27) // "orderNames_selectionChanged"
 
     },
     "MainWindow\0on_actNewOperation_triggered\0"
@@ -59,7 +58,7 @@ QT_MOC_LITERAL(20, 519, 27) // "orderNames_selectionChanged"
     "pos\0on_orderNames_customContextMenuRequested\0"
     "on_staffView_customContextMenuRequested\0"
     "on_operNames_doubleClicked\0"
-    "on_orderNames_doubleClicked\0index\0"
+    "on_orderNames_doubleClicked\0"
     "on_staffView_doubleClicked\0"
     "on_actEditOperation_triggered\0"
     "on_actEditOrder_triggered\0"
@@ -94,15 +93,15 @@ static const uint qt_meta_data_MainWindow[] = {
        8,    1,  108,    2, 0x08 /* Private */,
        9,    1,  111,    2, 0x08 /* Private */,
       10,    1,  114,    2, 0x08 /* Private */,
-      12,    1,  117,    2, 0x08 /* Private */,
-      13,    0,  120,    2, 0x08 /* Private */,
-      14,    0,  121,    2, 0x08 /* Private */,
-      15,    0,  122,    2, 0x08 /* Private */,
-      16,    0,  123,    2, 0x08 /* Private */,
-      17,    0,  124,    2, 0x08 /* Private */,
-      18,    0,  125,    2, 0x08 /* Private */,
-      19,    0,  126,    2, 0x08 /* Private */,
-      20,    0,  127,    2, 0x08 /* Private */,
+      11,    1,  117,    2, 0x08 /* Private */,
+      12,    0,  120,    2, 0x08 /* Private */,
+      13,    0,  121,    2, 0x08 /* Private */,
+      14,    0,  122,    2, 0x08 /* Private */,
+      15,    0,  123,    2, 0x08 /* Private */,
+      16,    0,  124,    2, 0x08 /* Private */,
+      17,    0,  125,    2, 0x08 /* Private */,
+      18,    0,  126,    2, 0x08 /* Private */,
+      19,    0,  127,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -112,8 +111,8 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void, QMetaType::QPoint,    6,
     QMetaType::Void, QMetaType::QPoint,    6,
     QMetaType::Void, QMetaType::QModelIndex,    2,
-    QMetaType::Void, QMetaType::QModelIndex,   11,
-    QMetaType::Void, QMetaType::QModelIndex,   11,
+    QMetaType::Void, QMetaType::QModelIndex,    2,
+    QMetaType::Void, QMetaType::QModelIndex,    2,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,

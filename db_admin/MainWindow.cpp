@@ -1,18 +1,15 @@
 #include "MainWindow.h"
 #include "OperationEdit.h"
+#include "OrderEdit.h"
 #include "databaseConnectionParams.h"
 #include "ui_MainWindow.h"
 #include "utility.h"
 
-#include <QMenu>
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
-
 #include <QDebug>
 
-void popupMenu(
-    const QPoint& pos, QWidget* viewport, const std::initializer_list<QAction*>& actList, QWidget* parent);
 
 QModelIndex refreshTableHelper(QTableView* tableView, const QString& query, QSqlDatabase& db);
 
@@ -95,29 +92,22 @@ void MainWindow::refreshAlgoTree() {}
 void MainWindow::on_operNames_customContextMenuRequested(const QPoint& pos)
 {
 	popupMenu(pos, ui->operNames->viewport(),
-		{ ui->actNewOperation, ui->actEditOperation, ui->actDeleteOperation }, this);
+        {ui->actNewOperation, ui->actEditOperation, ui->actDeleteOperation}, this);
 }
 
 void MainWindow::on_orderNames_customContextMenuRequested(const QPoint& pos)
 {
     popupMenu(
-        pos, ui->orderNames->viewport(), { ui->actNewOrder, ui->actEditOrder, ui->actDeleteOrder }, this);
+        pos, ui->orderNames->viewport(), {ui->actNewOrder, ui->actEditOrder, ui->actDeleteOrder}, this);
 }
 
 void MainWindow::on_staffView_customContextMenuRequested(const QPoint& pos)
 {
     popupMenu(pos, ui->staffView->viewport(),
-        { ui->actNewStaffMember, ui->actEditStaffMember, ui->actDeleteStaffMember }, this);
+        {ui->actNewStaffMember, ui->actEditStaffMember, ui->actDeleteStaffMember}, this);
 }
 
-void popupMenu(const QPoint& pos, QWidget* viewport, const std::initializer_list<QAction*>& actList,
-    QWidget* parent = Q_NULLPTR)
-{
-	auto menu = new QMenu(parent);
-	for (auto& i : actList)
-		menu->addAction(i);
-	menu->popup(viewport->mapToGlobal(pos));
-}
+
 
 void MainWindow::on_actNewOperation_triggered()
 {
@@ -125,15 +115,20 @@ void MainWindow::on_actNewOperation_triggered()
     refreshOperView();
 }
 
-void MainWindow::on_actNewOrder_triggered() {}
+void MainWindow::on_actNewOrder_triggered()
+{
+    OrderEdit::add(this, db);
+    refreshOrderView();
+    refreshAlgoTree();
+}
 
 void MainWindow::on_actNewStaffMember_triggered() {}
 
 void MainWindow::on_operNames_doubleClicked(const QModelIndex&) { on_actEditOperation_triggered(); }
 
-void MainWindow::on_orderNames_doubleClicked(const QModelIndex& index) {}
+void MainWindow::on_orderNames_doubleClicked(const QModelIndex&) { on_actEditOrder_triggered(); }
 
-void MainWindow::on_staffView_doubleClicked(const QModelIndex& index) {}
+void MainWindow::on_staffView_doubleClicked(const QModelIndex&) { on_actEditStaffMember_triggered(); }
 
 void MainWindow::on_actEditOperation_triggered()
 {
@@ -142,7 +137,13 @@ void MainWindow::on_actEditOperation_triggered()
     refreshOperView();
 }
 
-void MainWindow::on_actEditOrder_triggered() {}
+void MainWindow::on_actEditOrder_triggered()
+{
+    OrderEdit::edit(
+        this, db, ui->orderNames->model()->index(ui->orderNames->currentIndex().row(), 0).data().toInt());
+    refreshOrderView();
+    refreshAlgoTree();
+}
 
 void MainWindow::on_actEditStaffMember_triggered() {}
 

@@ -8,22 +8,21 @@
 OperationEdit::OperationEdit(QWidget* parent, QSqlDatabase& db, int operationId)
     : QDialog(parent)
     , m_db(db)
+    , m_names()
     , m_id(operationId)
     , m_ui(new Ui::OperationEdit)
 {
     m_ui->setupUi(this);
+    auto q = db.exec((operationId == -1)
+            ? "SELECT Title FROM OperationTypes;"
+            : "SELECT Title FROM OperationTypes WHERE Id <> " + QString::number(operationId) + ";");
+    while (q.next())
+        m_names.push_back(q.value(0).toString());
 }
 
 bool OperationEdit::checkUniqueTitle(const QString& text)
 {
-    int sameTitle;
-    if (m_id == -1)
-        sameTitle = getFirstIntQueryVal(
-            "SELECT COUNT (*) FROM OperationTypes WHERE Title = '" + text + "';", m_db);
-    else
-        sameTitle = getFirstIntQueryVal("SELECT COUNT (*) FROM OperationTypes WHERE Id <> "
-            + QString::number(m_id) + " AND Title = '" + text + "';");
-    return sameTitle == 0;
+    return !m_names.contains(text);
 }
 
 void OperationEdit::add(QWidget* parent, QSqlDatabase& db)
@@ -75,8 +74,6 @@ void OperationEdit::edit(QWidget* parent, QSqlDatabase& db, int operId)
     }
 }
 
-OperationEdit::~OperationEdit() { delete m_ui; }
-
 void OperationEdit::on_lineEdit_editingFinished()
 {
     auto text = m_ui->lineEdit->text();
@@ -86,3 +83,5 @@ void OperationEdit::on_lineEdit_editingFinished()
     } else if (!text.isEmpty() && checkUniqueTitle(text))
         m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
+
+OperationEdit::~OperationEdit() { delete m_ui; }

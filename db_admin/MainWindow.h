@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QSqlDatabase>
@@ -28,8 +27,8 @@ private slots:
     void on_staffView_customContextMenuRequested(const QPoint &pos);
 
     void on_operNames_doubleClicked(const QModelIndex&);
-    void on_orderNames_doubleClicked(const QModelIndex &index);
-    void on_staffView_doubleClicked(const QModelIndex &index);
+    void on_orderNames_doubleClicked(const QModelIndex &);
+    void on_staffView_doubleClicked(const QModelIndex &);
     void on_actEditOperation_triggered();
     void on_actEditOrder_triggered();
     void on_actEditStaffMember_triggered();
@@ -57,5 +56,3 @@ private:
     QSqlDatabase db;
     Ui::MainWindow *ui;
 };
-
-#endif // MAINWINDOW_H

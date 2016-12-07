@@ -3,53 +3,41 @@
 #include "utility.h"
 
 #include <QSqlQuery>
-#include <QVariant>
 #include <QVBoxLayout>
+#include <QVariant>
 
-OrderDependencyEdit::OrderDependencyEdit(QWidget* parent, int orderId, int operId)
+OrderDependencyEdit::OrderDependencyEdit(QWidget* parent)
     : QDialog(parent)
-    , m_orderId(orderId)
-    , m_operId(operId)
+    , ui(new Ui::OrderDependencyEdit)
 {
     ui->setupUi(this);
 }
 
-void OrderDependencyEdit::setupList(const QSqlQuery &q)
+QVector<QCheckBox*> OrderDependencyEdit::setupList(QVector<dependItem>& list, QSqlQuery& operNames)
 {
+    QVector<QCheckBox*> retval;
     auto boxLayout = new QVBoxLayout(this);
-    while(q.next()) {
-        auto item = new MyCheckBox(q.value(1).toString(), boxLayout);
-        item->id() = q.value(0).toInt();
+    auto size = list.size();
+    retval.reserve(size);
+    operNames.next();
+    for (auto i = 0; i != size; ++i) {
+        auto item = new QCheckBox(operNames.value(1).toString(), this);
+        item->setChecked(list.at(i).isParent);
         boxLayout->addWidget(item);
+        retval.push_back(item);
+        operNames.next();
     }
     ui->buttonBox->setLayout(boxLayout);
+    return retval;
 }
 
-void OrderDependencyEdit::edit(QWidget* parent, QSqlDatabase& db, int orderId, int operId)
+void OrderDependencyEdit::edit(QWidget* parent, QVector<dependItem>& list, QSqlQuery operNames)
 {
-    if (db.isOpen()) {
-        db.transaction();
-        auto strId = QString::number(orderId);
-        auto correctId = getFirstIntQueryVal("SELECT COUNT (*) FROM Algorithm WHERE Id_orderType = " + strId + ";");
-        if (correctId == 1) {
-            OrderDependencyEdit edit(parent, orderId, operId);
-            edit.setupList(db.exec("SELECT Id, Title FROM OrderTypes WHERE Id <> " + strId + " AND ;"));
-            if (edit.exec() == QDialog::Accepted) {
-                auto layout = ui->buttonBox->layout();
-                for(const auto& i : layout->children()) {
-                    auto ptr = qobject_cast<MyCheckBox*>(i);
-                    if (ptr->isChecked()) {
-                        db.exec("INSERT INTO ")
-                    }
-                }
-            }
-        }
-        db.commit();
-    }
+    OrderDependencyEdit edit(parent);
+    auto boxList = edit.setupList(list, operNames);
+    if (edit.exec() == QDialog::Accepted)
+        for (auto i = boxList.size(); i != -1; --i)
+            list[i].isParent = boxList.at(i)->isChecked();
 }
 
 OrderDependencyEdit::~OrderDependencyEdit() { delete ui; }
-
-int& MyCheckBox::id() { return m_id; }
-
-const int& MyCheckBox::id() const { return m_id; }
