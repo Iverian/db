@@ -1,0 +1,36 @@
+cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+set(MAIN db_admin)
+project(${MAIN})
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Sql REQUIRED)
+
+set(CUR ${CMAKE_CURRENT_SOURCE_DIR})
+
+include_directories(${CUR}/include)
+
+file(GLOB MAIN_HEADERS ${CUR}/include/*.h)
+file(GLOB MAIN_SOURCES ${CUR}/src/*.cpp)
+file(GLOB MAIN_QT_RESOURCES ${CUR}/*.qrc)
+
+add_executable(${MAIN}
+	${MAIN_HEADERS}
+	${MAIN_SOURCES}
+	${MAIN_QT_RESOURCES}
+	)
+target_link_libraries(${MAIN}
+	Qt5::Core
+	Qt5::Widgets
+	Qt5::Sql
+	)
+install(TARGETS ${MAIN}
+        RUNTIME DESTINATION ${PROJECT_BINARY_DIR}/bin)

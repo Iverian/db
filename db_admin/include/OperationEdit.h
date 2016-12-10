@@ -29,5 +29,5 @@ private:
     QSqlDatabase& m_db;
     int m_id;
     QStringList m_names;
-    Ui::OperationEdit* m_ui;
+    Ui::OperationEdit* ui;
 };

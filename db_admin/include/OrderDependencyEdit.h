@@ -2,7 +2,8 @@
 
 #include <QCheckBox>
 #include <QDialog>
-#include <QSqlDatabase>
+#include <map>
+#include <set>
 
 #include "OrderEdit.h"
 
@@ -13,12 +14,14 @@ class OrderDependencyEdit;
 class OrderDependencyEdit : public QDialog {
     Q_OBJECT
 public:
-    static void edit(QWidget* parent, QVector<dependItem>& list, QSqlQuery operNames);
+    static std::set<int> edit(const std::set<int>& oldParentList,
+        const std::map<QString, int>& operNames, QWidget* parent = Q_NULLPTR);
     ~OrderDependencyEdit();
 
 private:
     explicit OrderDependencyEdit(QWidget* parent);
-    QVector<QCheckBox*> setupList(QVector<dependItem>& list, QSqlQuery &operNames);
+    QVector<QCheckBox*> setupList(
+        const std::map<QString, int>& operNames, const std::set<int>& parentList);
 
     Ui::OrderDependencyEdit* ui;
 };

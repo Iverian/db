@@ -19,14 +19,14 @@
   <widget class="QWizardPage" name="wizardPage">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="orderTitle">
       <property name="placeholderText">
        <string>Order title</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPlainTextEdit" name="plainTextEdit">
+     <widget class="QPlainTextEdit" name="orderDesc">
       <property name="placeholderText">
        <string>Order description</string>
       </property>
