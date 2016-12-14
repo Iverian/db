@@ -158,13 +158,12 @@ void MainWindow::on_actDeleteOperation_triggered()
 {
     auto id
         = ui->operNames->model()->index(ui->operNames->currentIndex().row(), 0).data().toString();
-
     db.transaction();
     auto activeOrderCount
-        = getFirstIntQueryVal(s("WITH DependentOrders AS (SELECT Id_orderType FROM "
+        = getFirstIntQueryVal("WITH DependentOrders AS (SELECT Id_orderType FROM "
                                 "Algorithm WHERE Id_operationType = %1)"
                                 "SELECT COUNT (*) FROM Orders WHERE Id_orderType IN "
-                                "DependentOrders AND NumOperations <> 0;")
+                                "DependentOrders AND NumOperations <> 0;"_q
                                   .arg(id),
             db);
     if (activeOrderCount != 0)
@@ -174,12 +173,14 @@ void MainWindow::on_actDeleteOperation_triggered()
         auto confirm = QMessageBox::warning(this, "Confirm action",
             "All dependant Orders will be deactivated too", QMessageBox::Ok, QMessageBox::Cancel);
         if (confirm == QMessageBox::Ok) {
-            db.exec(s("UPDATE OperationTypes SET IsActive = false WHERE Id = %1;").arg(id));
-            db.exec(s("WITH DependentOrders AS (SELECT Id_orderType FROM Algorithm WHERE Id_operationType = %1) UPDATE OrderTypes SET IsActive = false WHERE Id IN DependentOrders").arg(id));
+            db.exec("UPDATE OperationTypes SET IsActive = false WHERE Id = %1;"_q.arg(id));
+            db.exec("WITH DependentOrders AS (SELECT Id_orderType FROM Algorithm WHERE "
+                      "Id_operationType = %1) UPDATE OrderTypes SET IsActive = false WHERE Id IN "
+                      "DependentOrders"_q
+                        .arg(id));
         }
     }
     db.commit();
-
     refreshOperView();
     refreshOrderView();
     refreshAlgoTree();
@@ -194,7 +195,7 @@ void MainWindow::on_actDeleteOrder_triggered()
 
     db.transaction();
     auto activeOrderCount = getFirstIntQueryVal(
-        "SELECT COUNT (*) FROM Orders WHERE Id_orderType = " + id + " AND NumOperations <> 0;",
+            "SELECT COUNT (*) FROM Orders WHERE Id_orderType = %1 AND NumOperations <> 0;"_q.arg(id),
         db);
     if (activeOrderCount != 0)
         QMessageBox::critical(
@@ -203,7 +204,7 @@ void MainWindow::on_actDeleteOrder_triggered()
         auto confirm = QMessageBox::warning(this, "Confirm action",
             "Order will become inactive for clients", QMessageBox::Ok, QMessageBox::Cancel);
         if (confirm == QMessageBox::Ok)
-            db.exec("UPDATE OrderTypes IsActive = false WHERE Id = " + id + ";");
+            db.exec("UPDATE OrderTypes IsActive = false WHERE Id = %1;"_q.arg(id));
     }
     db.commit();
 
@@ -218,16 +219,23 @@ void MainWindow::on_actDeleteStaffMember_triggered()
 
     db.transaction();
     auto activeOperCount = getFirstQueryVal<int>(
-        s("SELECT COUNT (*) FROM Operations WHERE Id_staff = %1 AND Status = 'running';").arg(id),
+        "SELECT COUNT (*) FROM Operations WHERE Id_staff = %1 AND Status = 'running';"_q.arg(id),
         db);
-    auto staffStatus = getFirstIntQueryVal("SELECT Status FROM Staff WHERE Id = " + id + ";");
+    auto staffStatus = getFirstQueryVal<int>("SELECT Status FROM Staff WHERE Id = " + id + ";");
     // TODO: проверить как ведет себя Qt с ENUM типами PSQL
 	if (activeOperCount != 0 || staffStatus == 2)
-		QMessageBox::critical(this, "Action forbidden!", "Unable to deactivate working staff member", QMessageBox::Ok);
+		QMessageBox::critical(this,
+                              "Action forbidden!",
+                              "Unable to deactivate working staff member",
+                              QMessageBox::Ok);
 	else {
-		auto confirm = QMessageBox::warning(this, "Confirm action", "Staff member will be unable to work", QMessageBox::Ok, QMessageBox::Cancel);
+		auto confirm = QMessageBox::warning(this,
+                                            "Confirm action",
+                                            "Staff member will be unable to work",
+                                            QMessageBox::Ok,
+                                            QMessageBox::Cancel);
 		if (confirm == QMessageBox::Ok)
-			db.exec(s("UPDATE Staff Status = 'deactivated' WHERE Id = %1;").arg(id));
+			db.exec("UPDATE Staff Status = 'deactivated' WHERE Id = %1;"_q.arg(id));
 	}
 	db.commit();
 	refreshStaffView();

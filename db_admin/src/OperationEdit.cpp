@@ -15,7 +15,7 @@ OperationEdit::OperationEdit(QWidget* parent, QSqlDatabase& db, int operationId)
 	ui->setupUi(this);
 	auto q = db.exec((operationId == -1)
 			? "SELECT Title FROM OperationTypes;"
-			: s("SELECT Title FROM OperationTypes WHERE Id <> %1;").arg(operationId));
+			: "SELECT Title FROM OperationTypes WHERE Id <> %1;"_q.arg(operationId));
 	while (q.next())
 		m_names.push_back(q.value(0).toString());
 }
@@ -39,7 +39,7 @@ void OperationEdit::add(QWidget* parent, QSqlDatabase& db)
 			auto title = edit.ui->lineEdit->text();
 			auto desc = edit.ui->plainTextEdit->toPlainText();
 			db.exec(
-				s("INSERT INTO OperationTypes (Title, Description) VALUES ('%1','%2');")
+				"INSERT INTO OperationTypes (Title, Description) VALUES ('%1','%2');"_q
 					.arg(title)
 					.arg(desc));
 		}
@@ -53,16 +53,16 @@ void OperationEdit::edit(QWidget* parent, QSqlDatabase& db, int operId)
 		db.transaction();
 		auto strId = QString::number(operId);
 		auto correctId = getFirstIntQueryVal(
-			s("SELECT COUNT (*) FROM OperationTypes WHERE Id = %1;").arg(operId), db);
+			"SELECT COUNT (*) FROM OperationTypes WHERE Id = %1;"_q.arg(operId), db);
 		if (correctId == 1) {
 			OperationEdit edit(parent, db, operId);
 			auto q = db.exec(
-				s("SELECT Title, Description FROM OperationTypes WHERE Id = %1;")
+				"SELECT Title, Description FROM OperationTypes WHERE Id = %1;"_q
 					.arg(operId));
 			q.next();
 			auto title = q.value(0).toString();
 
-			edit.setWindowTitle(s("Edit operation %1").arg(title));
+			edit.setWindowTitle("Edit operation %1"_q.arg(title));
 			edit.setWindowIcon(QIcon(":/MainWindowRes/edit_oper.png"));
 
 			edit.ui->lineEdit->setText(title);
@@ -70,8 +70,8 @@ void OperationEdit::edit(QWidget* parent, QSqlDatabase& db, int operId)
 			if (edit.exec() == QDialog::Accepted) {
 				title = edit.ui->lineEdit->text();
 				auto desc = edit.ui->plainTextEdit->toPlainText();
-				db.exec(s("UPDATE OperationTypes SET (Title, Description) = ('%1','%2') "
-						  "WHERE Id = %3;")
+				db.exec("UPDATE OperationTypes SET (Title, Description) = ('%1','%2') "
+						  "WHERE Id = %3;"_q
 							.arg(title)
 							.arg(desc)
 							.arg(operId));

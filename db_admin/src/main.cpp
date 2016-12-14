@@ -2,6 +2,8 @@
 
 #include <QApplication>
 #include <windows.h>
+#include <utility.h>
+#include <QDebug>
 
 int main(int argc, char* argv[])
 {
@@ -11,6 +13,6 @@ int main(int argc, char* argv[])
 	QApplication a(argc, argv);
 	MainWindow w;
 	w.show();
-
+	qDebug() << "%1, %2"_q.arg(1).arg(2);
 	return a.exec();
 }

@@ -29,4 +29,5 @@ T getFirstQueryVal(const QString& text,
 	return retval;
 }
 
-QString s(const char* const string);
+QString operator ""_q(const char *const string, unsigned);
+QString operator ""_q(const wchar_t* const string, unsigned);
