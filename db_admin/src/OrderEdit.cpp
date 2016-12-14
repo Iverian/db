@@ -10,9 +10,10 @@
 OrderEdit::OrderEdit(QWidget* parent, QSqlDatabase& db, int orderId)
     : QWizard(parent)
     , m_id(orderId)
-    , m_algoModel(nullptr)
     , m_db(db)
-    , m_algoList()
+    , m_algoModel(nullptr)
+    , m_ordNames()
+    , m_oprNames()
     , ui(new Ui::OrderEdit)
 {
     ui->setupUi(this);
@@ -22,9 +23,10 @@ bool OrderEdit::checkUniqueOrderTitle(const QString& text) { return !contains(m_
 
 QString OrderEdit::getOperTitle(int operId)
 {
-    return std::find_if(m_oprNames.begin(), m_oprNames.end(),
-        [&operId](const std::pair<int, QString>& val) { return val.first == operId; })
-        ->second;
+    return std::find_if(m_oprNames.begin(), m_oprNames.end(), [&operId](
+                                                                  const QPair<int, QString>& val) {
+        return val.first == operId;
+    })->second;
 }
 
 void OrderEdit::add(QWidget* parent, QSqlDatabase& db)
@@ -74,16 +76,17 @@ void OrderEdit::edit(QWidget* parent, QSqlDatabase& db, int orderId)
 void OrderEdit::insertAlgo(int orderId)
 {
     auto lastAlgoId = getFirstQueryVal<int>("SELECT last_value FROM algorithm_id_seq", m_db);
-    auto algoSize = m_algoList.size();
+    auto algoSize = m_algoModel->rowCount();
 
-    auto insertAlgoStr = "INSERT INTO Algorithm(Id_orderType, Id_operationType) VALUES "_q;
-    auto insertDependStr = "INSERT INTO AlgDependencies VALUES "_q;
+    QString insertAlgoStr = "INSERT INTO Algorithm(Id_orderType, Id_operationType) VALUES ";
+    QString insertDependStr = "INSERT INTO AlgDependencies VALUES ";
 
     for (size_t i = 0; i != algoSize; ++i) {
-        insertAlgoStr
-            += "(%1,%2)%3"_q.arg(orderId).arg(m_algoList[i].id).arg(i + 1 == algoSize ? ";" : ",");
+        insertAlgoStr += "(%1,%2)%3"_q.arg(orderId)
+                             .arg(m_algoModel->at(i).id)
+                             .arg(i + 1 == algoSize ? ";" : ",");
 
-        auto& parentInd = m_algoList[i].parentIndex;
+        auto& parentInd = m_algoModel->at(i).parentIndex;
         for (auto j = parentInd.begin(); j != parentInd.end(); ++j) {
             insertDependStr += "(%1,%2)%3"_q.arg(lastAlgoId + *j)
                                    .arg(lastAlgoId + i)
@@ -100,11 +103,11 @@ void OrderEdit::initializePage(int id)
 {
     switch (id) {
     case 0: {
-        auto q = m_db.exec((m_id == -1)
-                ? "SELECT Id, Title FROM OrderTypes;"
-                : "SELECT Id, Title FROM OrderTypes WHERE Id <> %1;"_q.arg(m_id));
+        auto q
+            = m_db.exec((m_id == -1) ? "SELECT Title FROM OrderTypes;"
+                                     : "SELECT Title FROM OrderTypes WHERE Id <> %1;"_q.arg(m_id));
         while (q.next())
-            m_ordNames.insert(q.value(1).toString());
+            m_ordNames.insert(q.value(0).toString());
         break;
     }
     case 1: {
@@ -137,21 +140,23 @@ void OrderEdit::initializeEditPage(int id)
         break;
     }
     case 1: {
-        auto dep = m_db.exec(
-            "WITH AlgoId AS (SELECT Id FROM Algorithm WHERE Id_orderType = %1) "
-            "SELECT Id_parent, Id_dependent FROM AlgDependencies WHERE Id_parent IN AlgoId AND "
-            "Id_dependent IN AlgoId;"_q.arg(m_id));
+        auto dep
+            = m_db.exec("WITH AlgoId AS (SELECT Id FROM Algorithm WHERE Id_orderType = %1) "
+                        "SELECT Id_parent, Id_dependent FROM AlgDependencies WHERE Id_parent IN "
+                        "AlgoId AND "
+                        "Id_dependent IN AlgoId;"_q.arg(m_id));
         auto alg = m_db.exec(
-            "SELECT Id, Id_operationType, Id_orderType FROM Algorithm WHERE Id_orderType = %1;"_q
-                .arg(m_id));
+            "SELECT Id, Id_operationType FROM Algorithm WHERE Id_orderType = %1;"_q.arg(m_id));
 
+        QMap<int, int> idMapper;
         while (alg.next()) {
             auto operId = alg.value(1).toInt();
-            m_algoList.push_back({operId, getOperTitle(operId), std::set<int>()});
+            m_algoModel->appendRow({operId, getOperTitle(operId), QSet<int>()});
+            idMapper.insert(alg.value(0).toInt(), m_algoModel->rowCount() - 1);
         }
         while (dep.next())
-            m_algoList[dep.value(1).toInt()].parentIndex.insert(dep.value(0).toInt());
-        m_algoModel->insertRows(0, m_algoList.size());
+            m_algoModel->at(idMapper.value(dep.value(1).toInt()))
+                .parentIndex.insert(idMapper.value(dep.value(0).toInt()));
 
         m_db.exec(
             "WITH AlgoId AS (SELECT Id FROM Algorithm WHERE Id_orderType =%1)"
@@ -179,77 +184,27 @@ void OrderEdit::on_algoList_doubleClicked(const QModelIndex&) { on_act_editParen
 
 void OrderEdit::on_operNames_doubleClicked(const QModelIndex& index)
 {
-    auto oper = m_oprNames[index.row()];
-    m_algoList.push_back({oper.first, oper.second, std::set<int>()});
-    ui->algoList->setModel(m_algoModel);
+    auto oper = m_oprNames.value(index.row());
+    m_algoModel->appendRow({oper.first, oper.second, QSet<int>()});
 }
 
 void OrderEdit::on_act_editParents_triggered()
 {
-    auto& algoItem = m_algoList[ui->algoList->currentIndex().row()];
-    std::map<QString, int> titleToIndex;
-    for (const auto& i : algoItem.parentIndex)
-        titleToIndex.insert({m_algoList[i].title, i});
+    auto cur = ui->algoList->currentIndex().row();
+    auto& algoItem = m_algoModel->at(cur);
+    QMap<QString, int> titleToIndex;
+    for (auto i = 0, size = m_algoModel->rowCount(); i != size; ++i) {
+        if (i == cur || m_algoModel->at(i).parentIndex.contains(i))
+            continue;
+        titleToIndex.insert(m_algoModel->at(i).title, i);
+    }
     algoItem.parentIndex = OrderDependencyEdit::edit(algoItem.parentIndex, titleToIndex, this);
-    ui->algoList->setModel(m_algoModel);
+    m_algoModel->updateRow(cur);
 }
 
 void OrderEdit::on_act_deleteItem_triggered()
 {
-    auto current = ui->algoList->currentIndex().row();
-    for (auto& i : m_algoList)
-        i.parentIndex.erase(i.parentIndex.find(current));
-    m_algoList.erase(m_algoList.begin() + current);
-    ui->algoList->setModel(m_algoModel);
-}
-
-int AlgoModel::rowCount(const QModelIndex& parent) const
-{
-    return parent.isValid() ? m_data.m_algoList.size() : 0;
-}
-
-int AlgoModel::columnCount(const QModelIndex& parent) const { return parent.isValid() ? 2 : 0; }
-
-QVariant AlgoModel::data(const QModelIndex& index, int role) const
-{
-    QVariant retval;
-    if (role == Qt::DisplayRole) {
-        switch (index.column()) {
-        case 0:
-            retval = QVariant::fromValue(m_data.m_algoList[index.row()].title);
-            break;
-        case 1:
-            retval = QVariant::fromValue(parentStr(m_data.m_algoList[index.row()].parentIndex));
-            break;
-        default:
-            break;
-        }
-    }
-    return retval;
-}
-
-QString AlgoModel::parentStr(const std::set<int>& x)
-{
-    QString retval;
-    for (auto i = x.begin(); i != x.end(); ++i)
-        retval += *i + (next(i) != x.end() ? ", " : "");
-    return retval;
-}
-
-AlgoModel::AlgoModel(OrderEdit* parent)
-    : QAbstractTableModel(parent)
-    , m_data(*parent)
-{
-}
-
-bool AlgoModel::insertRows(int row, int count, const QModelIndex& parent)
-{
-    return QAbstractItemModel::insertRows(row, count, parent);
-}
-
-bool AlgoModel::removeRows(int row, int count, const QModelIndex& parent)
-{
-    return QAbstractItemModel::removeRows(row, count, parent);
+    m_algoModel->eraseRow(ui->algoList->currentIndex().row());
 }
 
 void OrderEdit::on_algoList_customContextMenuRequested(const QPoint& pos)

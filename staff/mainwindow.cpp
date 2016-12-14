@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->description->setReadOnly(true);
     connectDB();
 
-    QFile file("C:/GitProjects/db/staff/data.txt");
+	QFile file(QDir::currentPath() + "/data.txt");
     if (file.open(QIODevice::ReadOnly)) staff_id = QString(file.readLine());
 
     if (hasRunningOp()) {

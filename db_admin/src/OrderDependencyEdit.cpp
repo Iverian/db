@@ -4,6 +4,8 @@
 
 #include <QVBoxLayout>
 
+using namespace std;
+
 OrderDependencyEdit::OrderDependencyEdit(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::OrderDependencyEdit)
@@ -13,32 +15,32 @@ OrderDependencyEdit::OrderDependencyEdit(QWidget* parent)
 
 OrderDependencyEdit::~OrderDependencyEdit() { delete ui; }
 
-std::set<int> OrderDependencyEdit::edit(
-    const std::set<int>& oldParentList, const std::map<QString, int>& operNames, QWidget* parent)
+QSet<int> OrderDependencyEdit::edit(
+    const QSet<int>& oldParentList, const QMap<QString, int>& operNames, QWidget* parent)
 {
-    std::set<int> retval;
+    QSet<int> retval;
     OrderDependencyEdit edit(parent);
     auto boxList = edit.setupList(operNames, oldParentList);
     if (edit.exec() == QDialog::Accepted)
-        for (const auto &i : boxList)
+        for (auto& i : boxList)
             if (i->isChecked())
-                retval.insert(operNames.at(i->text()));
+                retval.insert(operNames.value(i->text()));
     return retval;
 }
 
-QVector<QCheckBox*> OrderDependencyEdit::setupList(
-    const std::map<QString, int>& operNames, const std::set<int>& parentList)
+QList<QCheckBox*> OrderDependencyEdit::setupList(
+    const QMap<QString, int>& operNames, const QSet<int>& parentList)
 {
-    QVector<QCheckBox*> retval;
-    auto layout = new QVBoxLayout(this);
+    QList<QCheckBox*> retval;
+    auto layout = new QVBoxLayout(ui->groupBox);
     auto operCount = operNames.size();
     retval.reserve(operCount);
     for (auto i = operNames.begin(); i != operNames.end(); ++i) {
-        auto item = new QCheckBox(i->first, this);
-        item->setChecked(contains(parentList, i->second));
+        auto item = new QCheckBox(i.key(), this);
+        item->setChecked(contains(parentList, i.value()));
         layout->addWidget(item);
         retval.push_back(item);
     }
-    ui->buttonBox->setLayout(layout);
+    ui->groupBox->setLayout(layout);
     return retval;
 }

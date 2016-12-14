@@ -8,8 +8,8 @@
 OperationEdit::OperationEdit(QWidget* parent, QSqlDatabase& db, int operationId)
 	: QDialog(parent)
 	, m_db(db)
-	, m_names()
 	, m_id(operationId)
+	, m_names()
 	, ui(new Ui::OperationEdit)
 {
 	ui->setupUi(this);

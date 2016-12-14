@@ -221,7 +221,7 @@ void MainWindow::on_actDeleteStaffMember_triggered()
     auto activeOperCount = getFirstQueryVal<int>(
         "SELECT COUNT (*) FROM Operations WHERE Id_staff = %1 AND Status = 'running';"_q.arg(id),
         db);
-    auto staffStatus = getFirstQueryVal<int>("SELECT Status FROM Staff WHERE Id = " + id + ";");
+    auto staffStatus = getFirstQueryVal<int>("SELECT Status FROM Staff WHERE Id = %1;"_q.arg(id));
     // TODO: проверить как ведет себя Qt с ENUM типами PSQL
 	if (activeOperCount != 0 || staffStatus == 2)
 		QMessageBox::critical(this,
@@ -235,7 +235,7 @@ void MainWindow::on_actDeleteStaffMember_triggered()
                                             QMessageBox::Ok,
                                             QMessageBox::Cancel);
 		if (confirm == QMessageBox::Ok)
-			db.exec("UPDATE Staff Status = 'deactivated' WHERE Id = %1;"_q.arg(id));
+			db.exec("UPDATE Staff SET Status = 'deactivated' WHERE Id = %1;"_q.arg(id));
 	}
 	db.commit();
 	refreshStaffView();
