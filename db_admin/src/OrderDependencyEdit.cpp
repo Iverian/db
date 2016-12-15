@@ -2,10 +2,6 @@
 #include "ui_OrderDependencyEdit.h"
 #include "utility.h"
 
-#include <QVBoxLayout>
-
-using namespace std;
-
 OrderDependencyEdit::OrderDependencyEdit(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::OrderDependencyEdit)

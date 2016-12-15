@@ -2,6 +2,7 @@
 #include <QRadioButton>
 #include <map>
 #include <set>
+#include <memory>
 
 namespace Ui {
 class SkillEdit;

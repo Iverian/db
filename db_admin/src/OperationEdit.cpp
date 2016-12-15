@@ -3,7 +3,6 @@
 #include "utility.h"
 
 #include <QPushButton>
-#include <QSqlQuery>
 
 OperationEdit::OperationEdit(QWidget* parent, QSqlDatabase& db, int operationId)
 	: QDialog(parent)
@@ -52,13 +51,14 @@ void OperationEdit::edit(QWidget* parent, QSqlDatabase& db, int operId)
 	if (db.isOpen()) {
 		db.transaction();
 		auto strId = QString::number(operId);
-		auto correctId = getFirstIntQueryVal(
+		auto correctId = getFirstQueryVal<int>(
 			"SELECT COUNT (*) FROM OperationTypes WHERE Id = %1;"_q.arg(operId), db);
 		if (correctId == 1) {
 			OperationEdit edit(parent, db, operId);
 			auto q = db.exec(
 				"SELECT Title, Description FROM OperationTypes WHERE Id = %1;"_q
 					.arg(operId));
+			outQuery_(q.lastQuery(), db);
 			q.next();
 			auto title = q.value(0).toString();
 

@@ -5,9 +5,7 @@
 #include "ui_MainWindow.h"
 #include "utility.h"
 
-#include <QDebug>
 #include <QMessageBox>
-#include <QSqlQuery>
 #include <QSqlQueryModel>
 
 QModelIndex refreshTableHelper(QTableView* tableView, const QString& query, QSqlDatabase& db);
@@ -48,9 +46,10 @@ void MainWindow::connectToDb()
 
 void MainWindow::refreshOperView()
 {
-    auto found = refreshTableHelper(
-        ui->operNames, "SELECT Id, Title, Description FROM OperationTypes", db);
-
+    auto found = refreshTableHelper(ui->operNames,
+        "SELECT Id, Title, Description FROM OperationTypes%1"_q.arg(
+            !displayInactive() ? " WHERE IsActive = true;" : ";"),
+        db);
     ui->operNames->setColumnHidden(0, true);
     ui->operNames->setColumnHidden(2, true);
 
@@ -66,8 +65,10 @@ void MainWindow::refreshOperView()
 
 void MainWindow::refreshOrderView()
 {
-    auto found
-        = refreshTableHelper(ui->orderNames, "SELECT Id, Title, Description FROM OrderTypes", db);
+    auto found = refreshTableHelper(ui->orderNames,
+        "SELECT Id, Title, Description FROM OrderTypes%1"_q.arg(
+            !displayInactive() ? " WHERE IsActive = true;" : ";"),
+        db);
 
     ui->orderNames->setColumnHidden(0, true);
     ui->orderNames->setColumnHidden(2, true);
@@ -156,28 +157,25 @@ void MainWindow::on_actEditStaffMember_triggered() {}
 
 void MainWindow::on_actDeleteOperation_triggered()
 {
-    auto id
-        = ui->operNames->model()->index(ui->operNames->currentIndex().row(), 0).data().toString();
+    auto id = ui->operNames->model()->index(ui->operNames->currentIndex().row(), 0).data().toInt();
     db.transaction();
-    auto activeOrderCount
-        = getFirstIntQueryVal("WITH DependentOrders AS (SELECT Id_orderType FROM "
-                                "Algorithm WHERE Id_operationType = %1)"
-                                "SELECT COUNT (*) FROM Orders WHERE Id_orderType IN "
-                                "DependentOrders AND NumOperations <> 0;"_q
-                                  .arg(id),
-            db);
+    auto activeOrderCount = getFirstQueryVal<int>(
+        "WITH DependentOrders AS (SELECT Id_orderType FROM "
+        "Algorithm WHERE Id_operationType = %1) "
+        "SELECT COUNT(*) FROM Orders WHERE Id_orderType IN"
+        "(SELECT Id_orderType FROM DependentOrders) AND NumOperations <> 0;"_q.arg(id),
+        db);
     if (activeOrderCount != 0)
         QMessageBox::critical(
             this, "Action forbidden!", "Unable to deactivate used operation", QMessageBox::Ok);
     else {
         auto confirm = QMessageBox::warning(this, "Confirm action",
-            "All dependant Orders will be deactivated too", QMessageBox::Ok, QMessageBox::Cancel);
+            "All dependent Orders will be deactivated too", QMessageBox::Ok, QMessageBox::Cancel);
         if (confirm == QMessageBox::Ok) {
-            db.exec("UPDATE OperationTypes SET IsActive = false WHERE Id = %1;"_q.arg(id));
-            db.exec("WITH DependentOrders AS (SELECT Id_orderType FROM Algorithm WHERE "
-                      "Id_operationType = %1) UPDATE OrderTypes SET IsActive = false WHERE Id IN "
-                      "DependentOrders"_q
-                        .arg(id));
+            db.exec(echo << "UPDATE OperationTypes SET IsActive = false WHERE Id = %1;"_q.arg(id));
+            db.exec(echo
+                << "UPDATE OrderTypes SET IsActive = false WHERE Id IN (SELECT Id_orderType FROM Algorithm WHERE Id_operationType = %1);"_q
+                       .arg(id));
         }
     }
     db.commit();
@@ -194,8 +192,8 @@ void MainWindow::on_actDeleteOrder_triggered()
                   .toString();
 
     db.transaction();
-    auto activeOrderCount = getFirstIntQueryVal(
-            "SELECT COUNT (*) FROM Orders WHERE Id_orderType = %1 AND NumOperations <> 0;"_q.arg(id),
+    auto activeOrderCount = getFirstQueryVal<int>(
+        "SELECT COUNT(*) FROM Orders WHERE Id_orderType = %1 AND NumOperations <> 0;"_q.arg(id),
         db);
     if (activeOrderCount != 0)
         QMessageBox::critical(
@@ -204,7 +202,7 @@ void MainWindow::on_actDeleteOrder_triggered()
         auto confirm = QMessageBox::warning(this, "Confirm action",
             "Order will become inactive for clients", QMessageBox::Ok, QMessageBox::Cancel);
         if (confirm == QMessageBox::Ok)
-            db.exec("UPDATE OrderTypes IsActive = false WHERE Id = %1;"_q.arg(id));
+            db.exec("UPDATE OrderTypes SET IsActive = false WHERE Id = %1;"_q.arg(id));
     }
     db.commit();
 
@@ -222,59 +220,58 @@ void MainWindow::on_actDeleteStaffMember_triggered()
         "SELECT COUNT (*) FROM Operations WHERE Id_staff = %1 AND Status = 'running';"_q.arg(id),
         db);
     auto staffStatus = getFirstQueryVal<int>("SELECT Status FROM Staff WHERE Id = %1;"_q.arg(id));
-    // TODO: проверить как ведет себя Qt с ENUM типами PSQL
-	if (activeOperCount != 0 || staffStatus == 2)
-		QMessageBox::critical(this,
-                              "Action forbidden!",
-                              "Unable to deactivate working staff member",
-                              QMessageBox::Ok);
-	else {
-		auto confirm = QMessageBox::warning(this,
-                                            "Confirm action",
-                                            "Staff member will be unable to work",
-                                            QMessageBox::Ok,
-                                            QMessageBox::Cancel);
-		if (confirm == QMessageBox::Ok)
-			db.exec("UPDATE Staff SET Status = 'deactivated' WHERE Id = %1;"_q.arg(id));
-	}
-	db.commit();
-	refreshStaffView();
+    // TODO: check how Qt handles PSQL ENUMS
+    if (activeOperCount != 0 || staffStatus == 2)
+        QMessageBox::critical(this, "Action forbidden!",
+            "Unable to deactivate working staff member", QMessageBox::Ok);
+    else {
+        auto confirm = QMessageBox::warning(this, "Confirm action",
+            "Staff member will be unable to work", QMessageBox::Ok, QMessageBox::Cancel);
+        if (confirm == QMessageBox::Ok)
+            db.exec("UPDATE Staff SET Status = 'deactivated' WHERE Id = %1;"_q.arg(id));
+    }
+    db.commit();
+    refreshStaffView();
 }
 
 void MainWindow::operNames_selectionChanged()
 {
-	auto curRow = ui->operNames->currentIndex().row();
+    auto curRow = ui->operNames->currentIndex().row();
     auto query = reinterpret_cast<QSqlQueryModel*>(ui->operNames->model())->query();
-	if (query.seek(curRow)) {
-       ui->operDesc->clear();
+    if (query.seek(curRow)) {
+        ui->operDesc->clear();
         ui->operDesc->insertPlainText(query.value(2).toString());
-	}
+    }
 }
 
 void MainWindow::orderNames_selectionChanged()
 {
     auto cur = ui->orderNames->currentIndex();
-	auto query = reinterpret_cast<QSqlQueryModel*>(ui->orderNames->model())->query();
-	if (query.seek(cur.row())) {
+    auto query = reinterpret_cast<QSqlQueryModel*>(ui->orderNames->model())->query();
+    if (query.seek(cur.row())) {
         ui->orderDesc->clear();
         ui->orderDesc->insertPlainText(query.value(2).toString());
-	}
-	refreshAlgoTree();
+    }
+    refreshAlgoTree();
 }
 
-void MainWindow::resizeTableHeader() {
+bool MainWindow::displayInactive() { return ui->actDisplayInactive->isChecked(); }
+
+void MainWindow::resizeTableHeader()
+{
     ui->operNames->horizontalHeader()->setDefaultSectionSize(ui->operNames->width());
     ui->orderNames->horizontalHeader()->setDefaultSectionSize(ui->orderNames->width());
 }
 
 QModelIndex refreshTableHelper(QTableView* tableView, const QString& query, QSqlDatabase& db)
 {
-	QModelIndex retval;
-	auto queryModel = new QSqlQueryModel;
-	auto sel = tableView->currentIndex();
-	queryModel->setQuery(query,db);
-	auto found = -1;
-    if(sel.row() != -1) {
+    QModelIndex retval;
+    auto queryModel = new QSqlQueryModel;
+    auto sel = tableView->currentIndex();
+    queryModel->setQuery(query, db);
+    outQuery_(query, db);
+    auto found = -1;
+    if (sel.row() != -1) {
         auto q = queryModel->query();
         auto cur = tableView->model()->index(sel.row(), 0).data().toInt();
         for (auto i = 0; q.next(); ++i)
@@ -285,6 +282,13 @@ QModelIndex refreshTableHelper(QTableView* tableView, const QString& query, QSql
     }
     if (found != -1)
         retval = tableView->model()->index(found, sel.column());
- 	tableView->setModel(queryModel);
-	return retval;
+    tableView->setModel(queryModel);
+    return retval;
+}
+
+void MainWindow::on_actDisplayInactive_changed()
+{
+    refreshOrderView();
+    refreshAlgoTree();
+    refreshOperView();
 }

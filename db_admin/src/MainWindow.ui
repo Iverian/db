@@ -14,7 +14,7 @@
    <string>ASU admin</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="mainwindowres.qrc">
+   <iconset resource="../mainwindowres.qrc">
     <normaloff>:/MainWindowRes/abacus.png</normaloff>:/MainWindowRes/abacus.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -172,10 +172,11 @@
    <addaction name="actNewOperation"/>
    <addaction name="actNewOrder"/>
    <addaction name="actNewStaffMember"/>
+   <addaction name="actDisplayInactive"/>
   </widget>
   <action name="actNewOperation">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/new_oper.png</normaloff>:/MainWindowRes/new_oper.png</iconset>
    </property>
    <property name="text">
@@ -187,7 +188,7 @@
   </action>
   <action name="actNewOrder">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/new_order.png</normaloff>:/MainWindowRes/new_order.png</iconset>
    </property>
    <property name="text">
@@ -199,7 +200,7 @@
   </action>
   <action name="actNewStaffMember">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/new_staff.png</normaloff>:/MainWindowRes/new_staff.png</iconset>
    </property>
    <property name="text">
@@ -211,7 +212,7 @@
   </action>
   <action name="actEditOperation">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/edit_oper.png</normaloff>:/MainWindowRes/edit_oper.png</iconset>
    </property>
    <property name="text">
@@ -223,7 +224,7 @@
   </action>
   <action name="actEditOrder">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/edit_order.png</normaloff>:/MainWindowRes/edit_order.png</iconset>
    </property>
    <property name="text">
@@ -235,7 +236,7 @@
   </action>
   <action name="actEditStaffMember">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/edit_staff.png</normaloff>:/MainWindowRes/edit_staff.png</iconset>
    </property>
    <property name="text">
@@ -247,7 +248,7 @@
   </action>
   <action name="actDeleteOperation">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/delete_oper.png</normaloff>:/MainWindowRes/delete_oper.png</iconset>
    </property>
    <property name="text">
@@ -259,7 +260,7 @@
   </action>
   <action name="actDeleteOrder">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/delete_order.png</normaloff>:/MainWindowRes/delete_order.png</iconset>
    </property>
    <property name="text">
@@ -271,7 +272,7 @@
   </action>
   <action name="actDeleteStaffMember">
    <property name="icon">
-    <iconset resource="mainwindowres.qrc">
+    <iconset resource="../mainwindowres.qrc">
      <normaloff>:/MainWindowRes/delete_staff.png</normaloff>:/MainWindowRes/delete_staff.png</iconset>
    </property>
    <property name="text">
@@ -281,9 +282,17 @@
     <string>delete selected staff member</string>
    </property>
   </action>
+  <action name="actDisplayInactive">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Display inactive</string>
+   </property>
+  </action>
  </widget>
  <resources>
-  <include location="mainwindowres.qrc"/>
+  <include location="../mainwindowres.qrc"/>
  </resources>
  <connections/>
 </ui>
