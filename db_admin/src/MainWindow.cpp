@@ -6,6 +6,7 @@
 #include "utility.h"
 
 #include <QMessageBox>
+#include <QSqlError>
 #include <QSqlQueryModel>
 
 QModelIndex refreshTableHelper(QTableView* tableView, const QString& query, QSqlDatabase& db);
@@ -47,14 +48,21 @@ void MainWindow::connectToDb()
 void MainWindow::refreshOperView()
 {
     auto found = refreshTableHelper(ui->operNames,
-        "SELECT Id, Title, Description FROM OperationTypes%1"_q.arg(
-            !displayInactive() ? " WHERE IsActive = true;" : ";"),
+        "SELECT Id,Title,Description%1 FROM OperationTypes%2"_q
+            .arg(!displayInactive() ? "" : ",IsActive")
+            .arg(!displayInactive() ? " WHERE IsActive = true;" : ";"),
         db);
     ui->operNames->setColumnHidden(0, true);
     ui->operNames->setColumnHidden(2, true);
-
     ui->operDesc->clear();
-
+    if (displayInactive()) {
+        auto q = reinterpret_cast<QSqlQueryModel*>(ui->operNames->model())->query();
+        q.next();
+        for (auto i = 0; q.isValid(); q.next(), ++i)
+            if (!q.value(3).toBool())
+                ui->operNames->model()->setData(
+                    ui->operNames->model()->index(i, 3), QBrush(Qt::lightGray), Qt::ForegroundRole);
+    }
     connect(ui->operNames->selectionModel(),
         SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this,
         SLOT(operNames_selectionChanged()));
@@ -66,8 +74,8 @@ void MainWindow::refreshOperView()
 void MainWindow::refreshOrderView()
 {
     auto found = refreshTableHelper(ui->orderNames,
-        "SELECT Id, Title, Description FROM OrderTypes%1"_q.arg(
-            !displayInactive() ? " WHERE IsActive = true;" : ";"),
+        "SELECT Id, Title, Description FROM OrderTypes%1"_q
+        .arg(!displayInactive() ? " WHERE IsActive = true;" : ";"),
         db);
 
     ui->orderNames->setColumnHidden(0, true);
@@ -173,9 +181,9 @@ void MainWindow::on_actDeleteOperation_triggered()
             "All dependent Orders will be deactivated too", QMessageBox::Ok, QMessageBox::Cancel);
         if (confirm == QMessageBox::Ok) {
             db.exec(echo << "UPDATE OperationTypes SET IsActive = false WHERE Id = %1;"_q.arg(id));
-            db.exec(echo
-                << "UPDATE OrderTypes SET IsActive = false WHERE Id IN (SELECT Id_orderType FROM Algorithm WHERE Id_operationType = %1);"_q
-                       .arg(id));
+            db.exec(
+                "UPDATE OrderTypes SET IsActive = false WHERE Id"
+                " IN (SELECT Id_orderType FROM Algorithm WHERE Id_operationType = %1);"_q.arg(id));
         }
     }
     db.commit();
@@ -186,11 +194,8 @@ void MainWindow::on_actDeleteOperation_triggered()
 
 void MainWindow::on_actDeleteOrder_triggered()
 {
-    auto id = ui->orderNames->model()
-                  ->index(ui->orderNames->currentIndex().row(), 0)
-                  .data()
-                  .toString();
-
+    auto id
+        = ui->orderNames->model()->index(ui->orderNames->currentIndex().row(), 0).data().toInt();
     db.transaction();
     auto activeOrderCount = getFirstQueryVal<int>(
         "SELECT COUNT(*) FROM Orders WHERE Id_orderType = %1 AND NumOperations <> 0;"_q.arg(id),

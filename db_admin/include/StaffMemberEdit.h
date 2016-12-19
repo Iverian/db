@@ -1,30 +1,35 @@
 #pragma once
 
 #include <QDialog>
+#include <QMap>
 #include <QPoint>
-#include <set>
+#include <QSet>
+#include <QSqlDatabase>
 
 namespace Ui {
 class StaffMemberEdit;
 }
 
 class StaffMemberEdit : public QDialog {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    ~StaffMemberEdit();
+	static void add(const QSqlDatabase& db, QWidget* parent);
+	static void edit(int id, const QSqlDatabase& db, QWidget* parent);
+	~StaffMemberEdit();
 
 private slots:
-    void on_staffName_editingFinished();
+	void on_staffName_editingFinished();
 	void on_skillView_customContextMenuRequested(QPoint pos);
 	void on_act_addSkill_triggered();
 	void on_act_delSkill_triggered();
 
 private:
-    explicit StaffMemberEdit(QWidget* parent = 0);
+	explicit StaffMemberEdit(int id, const QSet<QString>& staffName,
+		const QMap<QString, int>& oprNames, QWidget* parent = Q_NULLPTR);
 
-    std::set<QString> m_staffNames;
-	std::map<int, QString> m_oprNames;
-
-    Ui::StaffMemberEdit* ui;
+	int m_id;
+	QSet<QString> m_staffNames;
+	QMap<QString, int> m_oprNames;
+	Ui::StaffMemberEdit* ui;
 };

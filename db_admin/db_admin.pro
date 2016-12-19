@@ -19,10 +19,10 @@ HEADERS += \
     include/OperationEdit.h \
     include/OrderDependencyEdit.h \
     include/OrderEdit.h \
-    include/SkillEdit.h \
     include/StaffMemberEdit.h \
     include/utility.h \
-    include/AlgoModel.h
+    include/AlgoModel.h \
+    include/SkillAdd.h
 
 SOURCES += \
     src/main.cpp \
@@ -30,10 +30,10 @@ SOURCES += \
     src/OperationEdit.cpp \
     src/OrderDependencyEdit.cpp \
     src/OrderEdit.cpp \
-    src/SkillEdit.cpp \
     src/StaffMemberEdit.cpp \
     src/utility.cpp \
-    src/AlgoModel.cpp
+    src/AlgoModel.cpp \
+    src/SkillAdd.cpp
 
 RESOURCES += \
     mainwindowres.qrc
@@ -43,5 +43,5 @@ FORMS += \
     src/OperationEdit.ui \
     src/OrderDependencyEdit.ui \
     src/OrderEdit.ui \
-    src/SkillEdit.ui \
-    src/StaffMemberEdit.ui
+    src/StaffMemberEdit.ui \
+    src/SkillAdd.ui

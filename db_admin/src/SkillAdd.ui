@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SkillEdit</class>
- <widget class="QDialog" name="SkillEdit">
+ <class>SkillAdd</class>
+ <widget class="QDialog" name="SkillAdd">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,15 +13,15 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="skills">
      <property name="title">
       <string/>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -38,7 +38,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>SkillEdit</receiver>
+   <receiver>SkillAdd</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -54,7 +54,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>SkillEdit</receiver>
+   <receiver>SkillAdd</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
