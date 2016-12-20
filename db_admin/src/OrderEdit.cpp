@@ -81,7 +81,7 @@ void OrderEdit::insertAlgo(int orderId)
     QString insertAlgoStr = "INSERT INTO Algorithm(Id_orderType, Id_operationType) VALUES ";
     QString insertDependStr = "INSERT INTO AlgDependencies VALUES ";
 
-    for (size_t i = 0; i != algoSize; ++i) {
+	for (auto i = 0; i != algoSize; ++i) {
         insertAlgoStr += "(%1,%2)%3"_q.arg(orderId)
                              .arg(m_algoModel->at(i).id)
                              .arg(i + 1 == algoSize ? ";" : ",");

@@ -5,6 +5,7 @@
 #include <QPoint>
 #include <QSet>
 #include <QSqlDatabase>
+#include <QStringList>
 
 namespace Ui {
 class StaffMemberEdit;
@@ -14,8 +15,8 @@ class StaffMemberEdit : public QDialog {
 	Q_OBJECT
 
 public:
-	static void add(const QSqlDatabase& db, QWidget* parent);
-	static void edit(int id, const QSqlDatabase& db, QWidget* parent);
+	static void add(QSqlDatabase& db, QWidget* parent);
+	static void edit(int id, QSqlDatabase& db, QWidget* parent);
 	~StaffMemberEdit();
 
 private slots:
@@ -26,10 +27,15 @@ private slots:
 
 private:
 	explicit StaffMemberEdit(int id, const QSet<QString>& staffName,
-		const QMap<QString, int>& oprNames, QWidget* parent = Q_NULLPTR);
+		const QMap<int, QString>& oprNames, QWidget* parent = Q_NULLPTR);
+	static StaffMemberEdit* init(const QSqlDatabase& db, int id, QWidget* parent);
+	QList<int> skills();
+	void insertSkills(int id, const QSqlDatabase& db);
 
 	int m_id;
 	QSet<QString> m_staffNames;
-	QMap<QString, int> m_oprNames;
+	QMap<int, QString> m_oprNames;
+	QSet<int> m_availNames;
+	QStringList m_list;
 	Ui::StaffMemberEdit* ui;
 };

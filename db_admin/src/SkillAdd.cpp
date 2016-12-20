@@ -11,23 +11,27 @@ SkillAdd::SkillAdd(const QMap<QString, int>& oprNames, QWidget* parent)
 	, m_oprNames(oprNames)
 {
 	ui->setupUi(this);
-	ui->buttonBox(QDialogButtonBox::Ok)->setEnabled(false);
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 }
 
 SkillAdd::~SkillAdd() { delete ui; }
 
 void SkillAdd::on_radioButton_checked(int)
 {
-	ui->buttonBox(QDialogButtonBox::Ok)->setEnabled(true);
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
 QButtonGroup* SkillAdd::setupList()
 {
 	auto buttonGroup = new QButtonGroup;
-	auto layout = new QVBoxLayout(ui->buttonBox);
-	for (const auto& i : m_oprNames)
-		buttonGroup->addButton(new QRadioButton(i, ui->buttonBox));
-	layout->addWidget(buttonGroup);
+	auto layout = new QVBoxLayout;
+	for (auto i = m_oprNames.cbegin(); i != m_oprNames.cend(); ++i) {
+		auto radio = new QRadioButton(i.key(), this);
+		buttonGroup->addButton(radio);
+		layout->addWidget(radio);
+	}
+	ui->skills->setLayout(layout);
+	connect(buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(on_radioButton_checked(int)));
 	return buttonGroup;
 }
 
