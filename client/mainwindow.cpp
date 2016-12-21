@@ -30,7 +30,7 @@ void MainWindow::init()
 	QSqlQuery query;
 	QSqlQueryModel* queryModel = new QSqlQueryModel(this);
 	ui->lst_orders->setModel(queryModel);
-	queryModel->setQuery("SELECT Id, Title as Orders FROM ordertypes");
+    queryModel->setQuery("SELECT Id, Title as Orders FROM ordertypes WHERE IsActive = true");
 	ui->lst_orders->setColumnHidden(0, true);
 }
 
@@ -124,14 +124,29 @@ void MainWindow::on_send_order_clicked()
 		query.next();
 		QString id_order = QString::number(query.value(0).toInt());
 
-		query.exec("SELECT Id_operationType FROM Algorithm WHERE Id_OrderType = " + IdOrderType
+        /*query.exec("SELECT Id_operationType FROM Algorithm WHERE Id_OrderType = " + IdOrderType
 			+ " AND Id NOT IN (SELECT Id_dependent FROM AlgDependencies)");
 		while (query.next()) {
 			QSqlQuery qr;
 			QString id_operationtype = QString::number(query.value(0).toInt());
 			qr.exec("INSERT INTO Operations(id_operationtype,id_order) VALUES(" + id_operationtype
 				+ "," + id_order + ")");
-		}
+        }*/
+
+        query.exec("SELECT Id, Id_OperationType FROM Algorithm WHERE Id_orderType = "+IdOrderType);
+        while (query.next()){
+            QSqlQuery qr;
+            QString id_alg = QString::number(query.value(0).toInt());
+            QString id_operationtype = QString::number(query.value(1).toInt());
+            qr.exec("INSERT INTO Operations(id_operationtype,id_order,id_alg) VALUES("+id_operationtype+","+id_order+","+id_alg+")");
+        }
+
+        query.exec("SELECT Id FROM Operations WHERE Id_Order = "+id_order+" and id_alg NOT IN (SELECT Id_dependent FROM AlgDependencies)");
+        while (query.next()){
+            QString id_operation = query.value(0).toString();
+            QSqlQuery qr;
+            qr.exec("UPDATE Operations SET Status = 'available' WHERE Id = "+id_operation);
+        }
 	}
 	QSqlDatabase::database().commit();
 

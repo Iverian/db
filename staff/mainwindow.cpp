@@ -55,7 +55,7 @@ void MainWindow::on_get_operation_clicked()
 {
     QSqlQuery query;
     QSqlDatabase::database().transaction();
-    query.exec("SELECT Id FROM Operations WHERE Id_operationType in (SELECT Id FROM OperationTypes WHERE Id in (SELECT Id_OperationType FROM Skills WHERE Id_Staff = "+staff_id+")) and Id_staff = 0");
+    query.exec("SELECT Id FROM Operations WHERE Id_operationType in (SELECT Id FROM OperationTypes WHERE Id in (SELECT Id_OperationType FROM Skills WHERE Id_Staff = "+staff_id+")) and Id_staff = 0 and Status = 'available'");
     query.next();
 
     QString op_id = query.value(0).toString();
@@ -79,6 +79,26 @@ void MainWindow::on_operation_done_clicked()
 {
     QSqlQuery query;
     query.exec("UPDATE Operations SET Status='completed' WHERE Id="+operation_id);
+
+    query.exec("SELECT Id, id_alg FROM Operations WHERE id_order = (SELECT Id_order FROM Operations WHERE Id = "+operation_id+") and Status <> 'completed'");
+    while(query.next()){
+        QString id_alg = query.value(1).toString();
+        QSqlQuery qr;
+        qr.exec("SELECT id_parent FROM algdependences WHERE id_dependent = "+id_alg);
+        int s = 0; // счетчик, который инкрементируется в случае если parent операции ещё не готов
+        while(qr.next()){
+            QString id_parent = qr.value(0).toString();
+            QSqlQuery q;
+            q.exec("SELECT Id FROM Operations WHERE id_alg = "+id_parent+" and Status <> 'completed'");
+            q.next();
+            QString a = q.value(0).toString();
+            if (a != "") s++;
+        }
+        if (s == 0){
+            QString id_operation = query.value(0).toString();
+            qr.exec("UPDATE Operations SET Status = 'available' WHERE Id = "+id_operation);
+        }
+    }
     operation_id="";
     ui->description->setText("");
     ui->title->setText("Get new operation");
