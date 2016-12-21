@@ -28,14 +28,15 @@
 *.out
 *.app
 
-#qt files
+#user files
 *.user
 *.autosave
 Makefile
-*.Debug
-*.Release
+*.[Dd]ebug
+*.[Rr]elease
 ui_*.h
 ui_*.cpp
 moc_*.h
 moc_*.cpp
-
+cmake-build-*
+.clang-format

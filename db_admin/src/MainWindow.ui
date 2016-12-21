@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ASU admin</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../mainwindowres.qrc">
+    <normaloff>:/MainWindowRes/abacus.png</normaloff>:/MainWindowRes/abacus.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="operations">
+       <attribute name="title">
+        <string>Operations</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="1">
+         <widget class="QPlainTextEdit" name="operDesc">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>Selected operation description</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" alignment="Qt::AlignLeft">
+         <widget class="QTableView" name="operNames">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showGrid">
+           <bool>false</bool>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="orders">
+       <attribute name="title">
+        <string>Orders</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="1">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QPlainTextEdit" name="orderDesc">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>Selected order description</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTreeView" name="orderAlgo">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="headerHidden">
+             <bool>true</bool>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="0" alignment="Qt::AlignLeft">
+         <widget class="QTableView" name="orderNames">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showGrid">
+           <bool>false</bool>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="staff">
+       <attribute name="title">
+        <string>Staff</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QTableView" name="staffView">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="stats">
+       <attribute name="title">
+        <string>Stats</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QTabWidget" name="tabWidget_2"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actNewOperation"/>
+   <addaction name="actNewOrder"/>
+   <addaction name="actNewStaffMember"/>
+   <addaction name="actDisplayInactive"/>
+  </widget>
+  <action name="actNewOperation">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/new_oper.png</normaloff>:/MainWindowRes/new_oper.png</iconset>
+   </property>
+   <property name="text">
+    <string>New operation</string>
+   </property>
+   <property name="toolTip">
+    <string>add new operation</string>
+   </property>
+  </action>
+  <action name="actNewOrder">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/new_order.png</normaloff>:/MainWindowRes/new_order.png</iconset>
+   </property>
+   <property name="text">
+    <string>New order</string>
+   </property>
+   <property name="toolTip">
+    <string>add new order</string>
+   </property>
+  </action>
+  <action name="actNewStaffMember">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/new_staff.png</normaloff>:/MainWindowRes/new_staff.png</iconset>
+   </property>
+   <property name="text">
+    <string>New staff member</string>
+   </property>
+   <property name="toolTip">
+    <string>add new staff member</string>
+   </property>
+  </action>
+  <action name="actEditOperation">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/edit_oper.png</normaloff>:/MainWindowRes/edit_oper.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit operation</string>
+   </property>
+   <property name="toolTip">
+    <string>edit selected opeartion</string>
+   </property>
+  </action>
+  <action name="actEditOrder">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/edit_order.png</normaloff>:/MainWindowRes/edit_order.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit order</string>
+   </property>
+   <property name="toolTip">
+    <string>edit selected order</string>
+   </property>
+  </action>
+  <action name="actEditStaffMember">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/edit_staff.png</normaloff>:/MainWindowRes/edit_staff.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit staff member</string>
+   </property>
+   <property name="toolTip">
+    <string>edit selected staff member</string>
+   </property>
+  </action>
+  <action name="actDeleteOperation">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/delete_oper.png</normaloff>:/MainWindowRes/delete_oper.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete operation</string>
+   </property>
+   <property name="toolTip">
+    <string>delete selected operation</string>
+   </property>
+  </action>
+  <action name="actDeleteOrder">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/delete_order.png</normaloff>:/MainWindowRes/delete_order.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Order</string>
+   </property>
+   <property name="toolTip">
+    <string>delete selected order</string>
+   </property>
+  </action>
+  <action name="actDeleteStaffMember">
+   <property name="icon">
+    <iconset resource="../mainwindowres.qrc">
+     <normaloff>:/MainWindowRes/delete_staff.png</normaloff>:/MainWindowRes/delete_staff.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete staff member</string>
+   </property>
+   <property name="toolTip">
+    <string>delete selected staff member</string>
+   </property>
+  </action>
+  <action name="actDisplayInactive">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Display inactive</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../mainwindowres.qrc"/>
+ </resources>
+ <connections/>
+</ui>

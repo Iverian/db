@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-11-16T14:27:41
+# Project created by QtCreator 2016-12-14T19:26:45
 #
 #-------------------------------------------------
 
@@ -10,27 +10,38 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = db_admin
 TEMPLATE = app
-CONFIG += c++14
 
-SOURCES += main.cpp\
-    AddNewOperation.cpp \
-    AddNewOrder.cpp \
-    AddNewStaffMember.cpp \
-    MainWindow.cpp
+INCLUDEPATH += include/
 
-HEADERS  += \
-    AddNewOperation.h \
-    AddNewOrder.h \
-    AddNewStaffMember.h \
-    MainWindow.h \
-    helperTypes.h \
-    databaseConnectionParams.h
+HEADERS += \
+    include/databaseconnectionparams.h \
+    include/MainWindow.h \
+    include/OperationEdit.h \
+    include/OrderDependencyEdit.h \
+    include/OrderEdit.h \
+    include/StaffMemberEdit.h \
+    include/utility.h \
+    include/AlgoModel.h \
+    include/SkillAdd.h
 
-FORMS    += \
-    AddNewOperation.ui \
-    AddNewOrder.ui \
-    AddNewStaffMember.ui \
-    MainWindow.ui
+SOURCES += \
+    src/main.cpp \
+    src/MainWindow.cpp \
+    src/OperationEdit.cpp \
+    src/OrderDependencyEdit.cpp \
+    src/OrderEdit.cpp \
+    src/StaffMemberEdit.cpp \
+    src/utility.cpp \
+    src/AlgoModel.cpp \
+    src/SkillAdd.cpp
 
 RESOURCES += \
     mainwindowres.qrc
+
+FORMS += \
+    src/MainWindow.ui \
+    src/OperationEdit.ui \
+    src/OrderDependencyEdit.ui \
+    src/OrderEdit.ui \
+    src/StaffMemberEdit.ui \
+    src/SkillAdd.ui
