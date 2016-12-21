@@ -8,42 +8,33 @@
 #include <algorithm>
 #include <iterator>
 
-StaffMemberEdit::StaffMemberEdit(int id, const QSet<QString>& staffNames,
-	const QMap<int, QString>& oprNames, QWidget* parent)
+StaffMemberEdit::StaffMemberEdit(int id, QSqlDatabase& db, QWidget* parent)
 	: QDialog(parent)
 	, m_id(id)
-	, m_staffNames(staffNames)
-	, m_oprNames(oprNames)
-	, m_availNames()
+	, m_staffNames()
+	, m_oprNames()
 	, m_list()
 	, ui(new Ui::StaffMemberEdit)
 {
-	for (auto i = oprNames.cbegin(); i != oprNames.cend(); ++i)
-		m_availNames.insert(i.key());
 	ui->setupUi(this);
-}
-
-StaffMemberEdit* StaffMemberEdit::init(const QSqlDatabase& db, int id, QWidget* parent)
-{
 	auto staff = db.exec(id == -1 ? "SELECT Name FROM Staff"
 								  : "SELECT Name FROM Staff WHERE Id <> %1;"_q.arg(id));
 	auto names = db.exec("SELECT Id, Title FROM OperationTypes;");
-	QSet<QString> staffNames;
-	QMap<int, QString> oprNames;
 	while (staff.next())
-		staffNames.insert(staff.value(0).toString());
+		m_staffNames.insert(staff.value(0).toString());
 	while (names.next())
-		oprNames.insert(names.value(0).toInt(), names.value(1).toString());
-	StaffMemberEdit* w = new StaffMemberEdit(id, staffNames, oprNames, parent);
+		m_oprNames.insert(names.value(0).toInt(), names.value(1).toString());
+	for (auto i = m_oprNames.cbegin(); i != m_oprNames.cend(); ++i)
+		m_availNames.insert(i.key());
 	if (id != -1) {
 		auto cur
 			= db.exec("SELECT Id_operationType FROM Skills WHERE Id = %1;"_q.arg(id));
-		for (auto i = oprNames.cbegin(); i != oprNames.cend(); ++i)
-			w->m_availNames.insert(i.key());
-		while (cur.next())
-			w->m_availNames.remove(cur.value(0).toInt());
+		while (cur.next()) {
+			m_availNames.remove(cur.value(0).toInt());
+			m_list.append(m_oprNames.find(cur.value(0).toInt()).value());
+		}
+		ui->skillView->setModel(new QStringListModel(m_list));
 	}
-	return w;
 }
 
 QList<int> StaffMemberEdit::skills()
@@ -71,13 +62,13 @@ void StaffMemberEdit::add(QSqlDatabase& db, QWidget* parent)
 {
 	if (db.isOpen()) {
 		db.transaction();
-		auto w = init(db, -1, parent);
-		if (w->exec() == QDialog::Accepted) {
+		StaffMemberEdit w(-1, db, parent);
+		if (w.exec() == QDialog::Accepted) {
 			db.exec(
-				"INSERT INTO Staff (Name) VALUES (%1);"_q.arg(w->ui->staffName->text()));
+				"INSERT INTO Staff (Name) VALUES ('%1');"_q.arg(w.ui->staffName->text()));
 			auto idStaff
 				= getFirstQueryVal<int>("SELECT last_value FROM staff_id_seq;", db);
-			w->insertSkills(idStaff, db);
+			w.insertSkills(idStaff, db);
 		}
 		db.commit();
 	}
@@ -87,13 +78,13 @@ void StaffMemberEdit::edit(int id, QSqlDatabase& db, QWidget* parent)
 {
 	if (db.isOpen()) {
 		db.transaction();
-		auto w = init(db, id, parent);
-		if (w->exec() == QDialog::Accepted) {
+		StaffMemberEdit w(id, db, parent);
+		if (w.exec() == QDialog::Accepted) {
 			db.exec("DELETE FROM Skills WHERE Id_staff = %1;"_q.arg(id));
 			db.exec("UPDATE Staff SET Name = %1 WHERE Id_staff = %2;"_q
-						.arg(w->ui->staffName->text())
+						.arg(w.ui->staffName->text())
 						.arg(id));
-			w->insertSkills(id, db);
+			w.insertSkills(id, db);
 		}
 		db.commit();
 	}

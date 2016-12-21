@@ -1,15 +1,31 @@
 #pragma once
 
+#include <QAbstractListModel>
 #include <QDialog>
+#include <QList>
 #include <QMap>
+#include <QPair>
 #include <QPoint>
 #include <QSet>
 #include <QSqlDatabase>
 #include <QStringList>
 
+
 namespace Ui {
 class StaffMemberEdit;
 }
+/*
+class StaffSkillModel : public QAbstractListModel {
+	Q_OBJECT
+public:
+	explicit StaffSkillModel(
+		const QList<QPair<int, QString>>& data = QList<QPair<int, QString>>(),
+		QWidget* parent = Q_NULLPTR);
+
+private:
+	QList<QPair<int, QString>> m_data;
+};
+*/
 
 class StaffMemberEdit : public QDialog {
 	Q_OBJECT
@@ -26,9 +42,7 @@ private slots:
 	void on_act_delSkill_triggered();
 
 private:
-	explicit StaffMemberEdit(int id, const QSet<QString>& staffName,
-		const QMap<int, QString>& oprNames, QWidget* parent = Q_NULLPTR);
-	static StaffMemberEdit* init(const QSqlDatabase& db, int id, QWidget* parent);
+	explicit StaffMemberEdit(int id, QSqlDatabase& db, QWidget* parent = Q_NULLPTR);
 	QList<int> skills();
 	void insertSkills(int id, const QSqlDatabase& db);
 

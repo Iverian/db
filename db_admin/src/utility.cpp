@@ -24,9 +24,9 @@ void popupMenu(const QPoint& pos, QWidget* viewport, const initializer_list<QAct
     menu->popup(viewport->mapToGlobal(pos));
 }
 
-QString operator""_q(const char* const string, unsigned) { return QString(string); }
+QString operator""_q(const char* const string, size_t) { return QString(string); }
 
-QString operator""_q(const wchar_t* const string, unsigned)
+QString operator""_q(const wchar_t* const string, size_t)
 {
     return QString::fromWCharArray(string);
 }

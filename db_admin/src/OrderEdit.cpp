@@ -40,9 +40,11 @@ void OrderEdit::add(QWidget* parent, QSqlDatabase& db)
         edit.button(QWizard::NextButton)->setEnabled(false);
 
         if (edit.exec() == QDialog::Accepted) {
-            db.exec("INSERT INTO OrderTypes(Title, Description) VALUES (%1,%2);"_q
-                        .arg(edit.ui->orderTitle->text())
-                        .arg(edit.ui->orderDesc->toPlainText()));
+			auto q = "INSERT INTO OrderTypes(Title, Description) VALUES ('%1','%2');"_q
+					 .arg(edit.ui->orderTitle->text())
+					 .arg(edit.ui->orderDesc->toPlainText());
+			qDebug() << q;
+			db.exec(q);
 
             auto orderId = getFirstQueryVal<int>("SELECT last_value FROM ordertypes_id_seq", db);
             edit.insertAlgo(orderId);
