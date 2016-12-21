@@ -19,8 +19,12 @@ MainWindow::MainWindow(QWidget* parent)
 {
 	ui->setupUi(this);
 	connectToDb();
+
 	refreshOperView();
 	refreshOrderView();
+	refreshAlgoTree();
+	refreshStaffView();
+
 	resizeTableHeader();
 }
 
@@ -99,6 +103,7 @@ void MainWindow::refreshStaffView()
 	auto found = refreshTableHelper(ui->staffView, "SELECT Id, Name FROM Staff", db);
 	if (found.isValid())
 		ui->staffView->setCurrentIndex(found);
+	ui->staffView->setColumnHidden(0, true);
 }
 
 void MainWindow::refreshAlgoTree() {}
@@ -134,7 +139,11 @@ void MainWindow::on_actNewOrder_triggered()
 	refreshAlgoTree();
 }
 
-void MainWindow::on_actNewStaffMember_triggered() { StaffMemberEdit::add(db, this); }
+void MainWindow::on_actNewStaffMember_triggered()
+{
+	StaffMemberEdit::add(db, this);
+	refreshStaffView();
+}
 
 void MainWindow::on_operNames_doubleClicked(const QModelIndex&)
 {

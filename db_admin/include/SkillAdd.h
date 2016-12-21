@@ -15,7 +15,7 @@ public:
 	static int add(const QMap<QString, int>& oprNames, QWidget* parent);
 	~SkillAdd();
 private slots:
-	void on_radioButton_checked(int);
+	void radioButton_checked(int);
 private:
 	explicit SkillAdd(const QMap<QString, int>& oprNames, QWidget *parent = Q_NULLPTR);
 	QButtonGroup* setupList();

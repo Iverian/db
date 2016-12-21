@@ -3,7 +3,7 @@
  <class>SkillAdd</class>
  <widget class="QDialog" name="SkillAdd">
   <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -15,6 +15,9 @@
   </property>
   <property name="windowTitle">
    <string>Add skill</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

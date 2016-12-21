@@ -1,3 +1,6 @@
+CREATE TYPE StaffStatus AS ENUM ('deactivated', 'available', 'logged_in' );
+CREATE TYPE OperationStatus AS ENUM ('notavailable' 'available', 'running', 'completed');
+
 CREATE TABLE OperationTypes (Id serial primary key,
                              Title varchar(50) unique,
                              IsActive bool default true,
@@ -5,7 +8,7 @@ CREATE TABLE OperationTypes (Id serial primary key,
                              );
 
 CREATE TABLE OrderTypes (Id serial primary key,
-                         Title varchar(50) unique,
+                         Title varchar(50) unique not null,
                          IsActive bool default true,
                          Description text default ' '
                          );
@@ -14,17 +17,16 @@ CREATE TABLE Algorithm (Id serial primary key,
                         Id_orderType integer,
                         Id_operationType integer,
                         foreign key(Id_orderType) references OrderTypes(Id),
-                        foreign key(Id_operationType) references OperationTypes(Id),
+                        foreign key(Id_operationType) references OperationTypes(Id)
                         );
 
 CREATE TABLE AlgDependencies (Id_parent integer,
                               Id_dependent integer,
                               foreign key(Id_parent) references Algorithm(Id),
-                              foreign key(Id_dependent) references Algorithm(Id),
-                              constraint sameOrder check() 
+                              foreign key(Id_dependent) references Algorithm(Id)
                               );
 
-CREATE TYPE StaffStatus AS ENUM ('deactivated', 'available', 'logged_in' );
+
 
 CREATE TABLE Staff(Id serial primary key,
                    Name varchar(50) unique,
@@ -37,7 +39,8 @@ CREATE TABLE Skills(Id_staff integer,
                     foreign key(Id_operationType) references OperationTypes(Id)
                     );     
 
-CREATE TABLE ClientOrders(Id serial primary key, NumOrders integer);
+CREATE TABLE ClientOrders(	Id serial primary key,
+							NumOrders integer);
 
 CREATE TABLE Orders(Id serial primary key,
                     Id_orderType integer,
@@ -47,25 +50,13 @@ CREATE TABLE Orders(Id serial primary key,
                     foreign key(Id_client) references ClientOrders(Id)
                     );
 
-CREATE TYPE OpStatus AS ENUM ('available', 'running', 'completed');
-
 CREATE TABLE Operations(Id serial primary key,
                         Id_operationType integer,
                         Id_order integer,
                         Id_staff integer default 0,
-                        Status OpStatus default 'available',
+                        Id_alg integer,
+                        Status OperationStatus default 'notavailable',
                         foreign key(Id_operationType) references OperationTypes(Id),
+                        foreign key(Id_alg) references Algorithm(Id),
                         foreign key(Id_order) references Orders(Id)
                         );
-
-CREATE TABLE RunningAlgo(Id serial primary key,
-						 Id_operationType integer,
-						 Id_operation integer default 0,
-						 foreign key(Id_operationType) references OperationTypes(id)
-						 );
-
-CREATE TABLE RunAlgoDepends(Id_parent integer,
-							Id_dependent integer,
-							foreign key(Id_parent) references RunningAlgo(Id),
-							foreign key(Id_dependent) references RunningAlgo(Id)
-							);
