@@ -5,8 +5,6 @@
 
 #include <QPushButton>
 #include <QStringListModel>
-#include <algorithm>
-#include <iterator>
 
 StaffMemberEdit::StaffMemberEdit(int id, QSqlDatabase& db, QWidget* parent)
 	: QDialog(parent)
@@ -58,10 +56,10 @@ void StaffMemberEdit::insertSkills(int id, const QSqlDatabase& db)
 
 StaffMemberEdit::~StaffMemberEdit() { delete ui; }
 
-void StaffMemberEdit::add(QSqlDatabase& db, QWidget* parent)
+void StaffMemberEdit::add(QWidget* parent, QSqlDatabase& db)
 {
 	if (db.isOpen()) {
-		db.transaction();
+		//db.transaction();
 		StaffMemberEdit w(-1, db, parent);
 		if (w.exec() == QDialog::Accepted) {
 			db.exec(
@@ -70,14 +68,14 @@ void StaffMemberEdit::add(QSqlDatabase& db, QWidget* parent)
 				= getFirstQueryVal<int>("SELECT last_value FROM staff_id_seq;", db);
 			w.insertSkills(idStaff, db);
 		}
-		db.commit();
+		//db.commit();
 	}
 }
 
-void StaffMemberEdit::edit(int id, QSqlDatabase& db, QWidget* parent)
+void StaffMemberEdit::edit(QWidget* parent, int id, QSqlDatabase& db)
 {
 	if (db.isOpen()) {
-		db.transaction();
+		//db.transaction();
 		StaffMemberEdit w(id, db, parent);
 		if (w.exec() == QDialog::Accepted) {
 			db.exec("DELETE FROM Skills WHERE Id_staff = %1;"_q.arg(id));
@@ -86,7 +84,7 @@ void StaffMemberEdit::edit(int id, QSqlDatabase& db, QWidget* parent)
 						.arg(id));
 			w.insertSkills(id, db);
 		}
-		db.commit();
+		//db.commit();
 	}
 }
 

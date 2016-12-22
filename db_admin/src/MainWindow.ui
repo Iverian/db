@@ -40,28 +40,13 @@
          </widget>
         </item>
         <item row="0" column="0" alignment="Qt::AlignLeft">
-         <widget class="QTableView" name="operNames">
+         <widget class="QListView" name="operNames">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
-          <property name="showGrid">
-           <bool>false</bool>
-          </property>
-          <attribute name="horizontalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="horizontalHeaderHighlightSections">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderHighlightSections">
-           <bool>false</bool>
-          </attribute>
          </widget>
         </item>
        </layout>
@@ -99,28 +84,13 @@
          </layout>
         </item>
         <item row="0" column="0" alignment="Qt::AlignLeft">
-         <widget class="QTableView" name="orderNames">
+         <widget class="QListView" name="orderNames">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
-          <property name="showGrid">
-           <bool>false</bool>
-          </property>
-          <attribute name="horizontalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="horizontalHeaderHighlightSections">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderHighlightSections">
-           <bool>false</bool>
-          </attribute>
          </widget>
         </item>
        </layout>
@@ -130,11 +100,21 @@
         <string>Staff</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <widget class="QTableView" name="staffView">
-          <property name="contextMenuPolicy">
-           <enum>Qt::CustomContextMenu</enum>
+        <item row="0" column="0" alignment="Qt::AlignLeft">
+         <widget class="QListView" name="staffNames">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
+          <property name="tabKeyNavigation">
+           <bool>false</bool>
+          </property>
+          <property name="showDropIndicator" stdset="0">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QListView" name="staffSkills">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>

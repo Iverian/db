@@ -1,6 +1,7 @@
 #pragma once
 
 #include <AlgoModel.h>
+#include <OperationListModel.h>
 
 #include <QMap>
 #include <QPair>
@@ -14,14 +15,13 @@ namespace Ui {
 class OrderEdit;
 }
 
-class OrderEdit;
-
 class OrderEdit : public QWizard {
 
     Q_OBJECT
     friend class AlgoModel;
 
 public:
+    explicit OrderEdit(QWidget* parent, QSqlDatabase& db, int orderId = -1);
     ~OrderEdit();
     static void add(QWidget* parent, QSqlDatabase& db);
     static void edit(QWidget* parent, QSqlDatabase& db, int orderId);
@@ -37,8 +37,6 @@ private slots:
     void on_algoList_customContextMenuRequested(const QPoint& pos);
 
 private:
-    explicit OrderEdit(QWidget* parent, QSqlDatabase& db, int orderId = -1);
-
     bool checkUniqueOrderTitle(const QString& text);
     QString getOperTitle(int operId);
     void initializeEditPage(int id);
@@ -47,7 +45,7 @@ private:
     int m_id;
     QSqlDatabase& m_db;
     AlgoModel* m_algoModel;
+    OperationListModel* m_oprNames;
     QSet<QString> m_ordNames;
-    QVector<QPair<int, QString>> m_oprNames;
     Ui::OrderEdit* ui;
 };

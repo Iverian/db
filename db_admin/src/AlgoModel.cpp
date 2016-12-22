@@ -47,8 +47,8 @@ void AlgoModel::eraseRow(int i)
     QAbstractTableModel::beginRemoveRows(QModelIndex(), i, i);
     m_data.remove(i);
     QAbstractTableModel::endRemoveRows();
-    for (auto& i : m_data)
-        i.parentIndex.remove(i.id);
+    for (auto& j : m_data)
+        j.parentIndex.remove(i);
     dataChanged(index(0, 1), index(rowCount(), 1), {Qt::DisplayRole});
 }
 

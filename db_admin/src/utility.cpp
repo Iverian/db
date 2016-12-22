@@ -1,9 +1,7 @@
 #include "utility.h"
 
-#include <QDebug>
 #include <QMenu>
 #include <QSqlRecord>
-#include <iostream>
 
 using namespace std;
 
@@ -53,3 +51,5 @@ void outputQuery(QSqlQuery query)
 }
 
 void outputQuery(const QString& text, const QSqlDatabase& db) { outputQuery(db.exec(text)); }
+
+bool isSet(int x, int flag) { return (x & flag) != 0; }

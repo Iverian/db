@@ -67,9 +67,11 @@ T getFirstQueryVal(const QString& text, const QSqlDatabase& db = QSqlDatabase::d
 	auto retval = stat ? q.value(0).value<T>() : T();
 	if (status)
 		*status = stat;
+	q.finish();
 	return retval;
 }
 
-QString operator ""_q(const char* const string, unsigned);
-QString operator ""_q(const wchar_t* const string, unsigned);
+QString operator ""_q(const char* const string, size_t);
+QString operator ""_q(const wchar_t* const string, size_t);
 
+bool isSet(int x, int flag);

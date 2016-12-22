@@ -15,7 +15,8 @@ class OrderDependencyEdit;
 class OrderDependencyEdit : public QDialog {
     Q_OBJECT
 public:
-    static QSet<int> edit(const QSet<int>& oldParentList, const QMap<QString, int>& operNames,
+    static QSet<int> edit(const QSet<int>& oldParentList,
+        const QMap<QString, int>& operNames,
         QWidget* parent = Q_NULLPTR);
     ~OrderDependencyEdit();
 

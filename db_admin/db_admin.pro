@@ -23,7 +23,10 @@ HEADERS += \
     include/StaffMemberEdit.h \
     include/utility.h \
     include/AlgoModel.h \
-    include/SkillAdd.h
+    include/SkillAdd.h \
+    include/OperationListModel.h \
+    include/OrderListModel.h \
+    include/StaffMemberModel.h
 
 SOURCES += \
     src/main.cpp \
@@ -34,7 +37,10 @@ SOURCES += \
     src/StaffMemberEdit.cpp \
     src/utility.cpp \
     src/AlgoModel.cpp \
-    src/SkillAdd.cpp
+    src/SkillAdd.cpp \
+    src/OperationListModel.cpp \
+    src/OrderListModel.cpp \
+    src/StaffMemberModel.cpp
 
 RESOURCES += \
     mainwindowres.qrc
