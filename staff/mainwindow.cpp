@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    QSqlQuery query;
+    query.exec("UPDATE staff SET Status = 'available' WHERE Id = "+staff_id);
     delete ui;
 }
 
@@ -59,6 +61,7 @@ void MainWindow::on_get_operation_clicked()
     query.next();
 
     QString op_id = query.value(0).toString();
+    qDebug()<<op_id;
     if (op_id != ""){
         query.exec("SELECT Title, Description FROM OperationTypes AS A, Operations AS B WHERE A.Id = B.Id_OperationType and B.Id = "+op_id);
         query.next();

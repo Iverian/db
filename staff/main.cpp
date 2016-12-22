@@ -3,18 +3,20 @@
 
 QString get_staff_id()
 {
-	QFile file("C:/GitProjects/db/staff/data.txt");
+    QFile file(QDir::currentPath() + "/data.txt");
 	if (file.open(QIODevice::ReadOnly))
 		return QString(file.readLine());
 }
 
 bool user_exist()
 {
-	QSqlQuery query;
+    QSqlQuery query,qr;
 	QString staff_id = get_staff_id();
-	query.exec(
-		"SELECT COUNT(*) FROM staff WHERE Id = " + staff_id + " and Status='logged_in'");
+    qr.exec("SELECT COUNT(*) FROM staff WHERE Id = "+staff_id);
+    qr.next();
+	query.exec("SELECT COUNT(*) FROM staff WHERE Id = " + staff_id + " and Status='logged_in'");
 	query.next();
+    if (qr.value(0).toInt() == 0) return true; else
 	if (query.value(0).toInt() != 0)
 		return true;
 	else
@@ -28,7 +30,7 @@ int main(int argc, char* argv[])
 	MainWindow w;
 	w.show();
 
-	// if (user_exist()) w.close();
+    if (user_exist()) w.close();
 
 	return a.exec();
 }

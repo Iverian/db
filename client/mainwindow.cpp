@@ -124,15 +124,6 @@ void MainWindow::on_send_order_clicked()
 		query.next();
 		QString id_order = QString::number(query.value(0).toInt());
 
-        /*query.exec("SELECT Id_operationType FROM Algorithm WHERE Id_OrderType = " + IdOrderType
-			+ " AND Id NOT IN (SELECT Id_dependent FROM AlgDependencies)");
-		while (query.next()) {
-			QSqlQuery qr;
-			QString id_operationtype = QString::number(query.value(0).toInt());
-			qr.exec("INSERT INTO Operations(id_operationtype,id_order) VALUES(" + id_operationtype
-				+ "," + id_order + ")");
-        }*/
-
         query.exec("SELECT Id, Id_OperationType FROM Algorithm WHERE Id_orderType = "+IdOrderType);
         while (query.next()){
             QSqlQuery qr;
